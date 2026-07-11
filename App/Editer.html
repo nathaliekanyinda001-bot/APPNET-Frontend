@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -381,28 +380,6 @@
             object-fit: cover;
         }
 
-        .btn-upload {
-            padding: 8px 24px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            margin-top: 0.5rem;
-        }
-
-        .btn-upload:hover {
-            background: rgba(59, 130, 246, 0.25);
-        }
-
-        .btn-upload:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .btn-group {
             display: flex;
             gap: 1rem;
@@ -606,7 +583,7 @@
                 </div>
             </div>
 
-            <!-- Formulaire principal -->
+            <!-- Formulaire -->
             <form id="editForm" autocomplete="off">
                 <div class="form-group">
                     <label>Titre de l'application <span class="required">*</span></label>
@@ -660,7 +637,6 @@
                         <div class="filename" id="iconFilename">Aucun fichier sélectionné</div>
                         <input type="file" id="iconInput" accept="image/*" />
                     </div>
-                    <button type="button" class="btn-upload" id="uploadIconBtn">Changer l'icône</button>
                     <div id="iconPreview" class="image-preview"></div>
                 </div>
 
@@ -673,20 +649,15 @@
                         <div class="filename" id="screenshotsFilename">Aucun fichier sélectionné</div>
                         <input type="file" id="screenshotsInput" accept="image/*" multiple />
                     </div>
-                    <button type="button" class="btn-upload" id="uploadScreenshotsBtn">Ajouter les captures</button>
                     <div id="screenshotsPreview" class="image-preview">
                         <span style="color:#6b7280;font-size:0.8rem;">Chargement...</span>
                     </div>
                 </div>
 
-                <!-- Boutons d'action -->
+                <!-- Bouton unique pour tout envoyer -->
                 <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" id="saveBtn">
-                        <span class="btn-text"><i class="fas fa-save"></i> Enregistrer les modifications</span>
-                        <span class="spinner"></span>
-                    </button>
-                    <button type="button" class="btn btn-success" id="submitBtn">
-                        <span class="btn-text"><i class="fas fa-rocket"></i> Soumettre pour validation</span>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span class="btn-text"><i class="fas fa-save"></i> Envoyer les modifications</span>
                         <span class="spinner"></span>
                     </button>
                 </div>
@@ -719,7 +690,7 @@
                 return;
             }
 
-            // DOM elements
+            // DOM
             const form = document.getElementById('editForm');
             const titleInput = document.getElementById('title');
             const shortDescInput = document.getElementById('short_description');
@@ -729,7 +700,6 @@
             const appPackage = document.getElementById('appPackage');
             const appStatusBadge = document.getElementById('appStatusBadge');
             const appIcon = document.getElementById('appIcon');
-            const saveBtn = document.getElementById('saveBtn');
             const submitBtn = document.getElementById('submitBtn');
             const messageDiv = document.getElementById('message');
 
@@ -737,21 +707,17 @@
             const iconInput = document.getElementById('iconInput');
             const iconFilename = document.getElementById('iconFilename');
             const iconUploadArea = document.getElementById('iconUploadArea');
-            const uploadIconBtn = document.getElementById('uploadIconBtn');
             const iconPreview = document.getElementById('iconPreview');
 
             // Upload screenshots
             const screenshotsInput = document.getElementById('screenshotsInput');
             const screenshotsFilename = document.getElementById('screenshotsFilename');
             const screenshotsUploadArea = document.getElementById('screenshotsUploadArea');
-            const uploadScreenshotsBtn = document.getElementById('uploadScreenshotsBtn');
             const screenshotsPreview = document.getElementById('screenshotsPreview');
 
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
             let toastTimeout;
-
-            let appData = null; // stocker les données de l'app pour les afficher
 
             // ===== Fonctions =====
             function showToast(text, type = 'info') {
@@ -772,13 +738,13 @@
                 }, 8000);
             }
 
-            function setLoading(btn, loading) {
+            function setLoading(loading) {
                 if (loading) {
-                    btn.classList.add('loading');
-                    btn.disabled = true;
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
                 } else {
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
                 }
             }
 
@@ -840,53 +806,35 @@
             setupUpload(iconUploadArea, iconInput, iconFilename, iconPreview, false);
             setupUpload(screenshotsUploadArea, screenshotsInput, screenshotsFilename, screenshotsPreview, true);
 
-            // ===== Récupérer les données de l'application (détails complets) =====
-            async function fetchAppDetails() {
+            // ===== Récupérer les données de l'application =====
+            async function fetchAppData() {
                 try {
-                    // Utiliser la route GET /api/apps/:id pour récupérer les détails (screenshots inclus)
-                    // Si cette route n'est pas disponible pour les devs, on utilise /apps/my-apps + un autre appel
-                    // Ici on tente /api/apps/:id
-                    const resp = await fetch(`${API_BASE}/apps/${appId}`, {
+                    const resp = await fetch(`${API_BASE}/apps/my-apps`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         }
                     });
                     if (!resp.ok) {
-                        // Fallback: on récupère depuis /apps/my-apps
-                        const fallbackResp = await fetch(`${API_BASE}/apps/my-apps`, {
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        if (!fallbackResp.ok) {
-                            const err = await fallbackResp.json().catch(() => ({}));
-                            throw new Error(err.message || `Erreur HTTP ${fallbackResp.status}`);
-                        }
-                        const data = await fallbackResp.json();
-                        if (!data.success) throw new Error(data.message || 'Erreur inconnue');
-                        const apps = data.apps || [];
-                        const app = apps.find(a => a.id == appId);
-                        if (!app) throw new Error('Application introuvable');
-                        // On essaie de récupérer les screenshots séparément
-                        const screenshots = await fetchScreenshots();
-                        app.screenshots = screenshots;
-                        return app;
+                        const err = await resp.json().catch(() => ({}));
+                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
                     }
                     const data = await resp.json();
-                    if (!data.success || !data.app) throw new Error(data.message || 'Erreur inconnue');
-                    return data.app;
+                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                    const apps = data.apps || [];
+                    const app = apps.find(a => a.id == appId);
+                    if (!app) throw new Error('Application introuvable.');
+                    return app;
                 } catch (err) {
-                    console.error('Erreur fetchAppDetails:', err);
+                    console.error('Erreur fetchAppData:', err);
                     throw err;
                 }
             }
 
-            // Récupérer les screenshots depuis /api/apps/:id/screenshots si disponible, sinon via /api/apps/:id
+            // ===== Récupérer les screenshots =====
             async function fetchScreenshots() {
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/screenshots`, {
+                    const resp = await fetch(`${API_BASE}/apps/${appId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
@@ -894,9 +842,11 @@
                     });
                     if (!resp.ok) return [];
                     const data = await resp.json();
-                    if (data.success && data.screenshots) return data.screenshots;
+                    if (data.success && data.app && data.app.screenshots) {
+                        return data.app.screenshots;
+                    }
                     return [];
-                } catch (e) {
+                } catch (err) {
                     return [];
                 }
             }
@@ -917,29 +867,18 @@
                     screenshotsPreview.innerHTML = `<span style="color:#6b7280;font-size:0.8rem;">Aucune capture</span>`;
                     return;
                 }
-                // On affiche jusqu'à 8 captures
-                const toShow = screenshots.slice(0, 8);
-                toShow.forEach(s => {
+                screenshots.forEach(s => {
                     const div = document.createElement('div');
                     div.className = 'preview-item';
-                    const imgUrl = s.image_url || s;
-                    div.innerHTML = `<img src="${imgUrl}" alt="screenshot" />`;
+                    div.innerHTML = `<img src="${s.image_url}" alt="screenshot" />`;
                     screenshotsPreview.appendChild(div);
                 });
-                if (screenshots.length > 8) {
-                    const span = document.createElement('span');
-                    span.style.cssText = 'color:#6b7280;font-size:0.8rem;display:flex;align-items:center;';
-                    span.textContent = `+${screenshots.length - 8} autres`;
-                    screenshotsPreview.appendChild(span);
-                }
             }
 
             // ===== Remplir le formulaire =====
             function populateForm(app) {
-                appData = app;
                 appName.textContent = app.title || app.package_name || 'Sans nom';
                 appPackage.textContent = app.package_name || 'N/A';
-                // Statut
                 const statusMap = {
                     pending: { label: 'En attente', class: 'pending' },
                     reviewing: { label: 'En révision', class: 'reviewing' },
@@ -953,19 +892,19 @@
 
                 displayIcon(app.logo_url);
 
-                // Remplir champs
                 titleInput.value = app.title || '';
                 shortDescInput.value = app.short_description || '';
                 longDescInput.value = app.long_description || '';
                 categorySelect.value = app.category || '';
 
-                // Récupérer les screenshots
-                const screenshots = app.screenshots || [];
-                displayScreenshots(screenshots);
+                fetchScreenshots().then(displayScreenshots).catch(() => displayScreenshots([]));
             }
 
-            // ===== Enregistrer les modifications (PUT) =====
-            async function saveChanges() {
+            // ===== Soumettre le formulaire (PUT /:id/update) =====
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                messageDiv.className = 'message';
+
                 const title = titleInput.value.trim();
                 const short_description = shortDescInput.value.trim();
                 const long_description = longDescInput.value.trim();
@@ -976,153 +915,67 @@
                     return;
                 }
 
-                const payload = { title, short_description, long_description, category };
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('short_description', short_description);
+                formData.append('long_description', long_description);
+                formData.append('category', category);
 
-                setLoading(saveBtn, true);
+                // Icône
+                if (iconInput.files.length > 0) {
+                    formData.append('logo', iconInput.files[0]);
+                }
+
+                // Captures d'écran
+                if (screenshotsInput.files.length > 0) {
+                    const files = screenshotsInput.files;
+                    if (files.length > 8) {
+                        showMessage('Vous pouvez sélectionner jusqu\'à 8 captures.', 'error');
+                        return;
+                    }
+                    for (const file of files) {
+                        formData.append('screenshots', file);
+                    }
+                }
+
+                setLoading(true);
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}`, {
+                    const resp = await fetch(`${API_BASE}/apps/${appId}/update`, {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
+                            'Authorization': `Bearer ${token}`
+                            // Ne pas mettre Content-Type (FormData le gère)
                         },
-                        body: JSON.stringify(payload)
+                        body: formData
                     });
                     const data = await resp.json();
                     if (!resp.ok || !data.success) {
                         throw new Error(data.message || 'Erreur lors de la modification.');
                     }
-                    showMessage('✅ Modifications enregistrées avec succès !', 'success');
-                    showToast('Modifications enregistrées !', 'success');
+                    showMessage('✅ Modifications envoyées avec succès ! Elles sont en attente de validation.', 'success');
+                    showToast('Modifications soumises avec succès !', 'success');
                     // Recharger les données
-                    const updatedApp = await fetchAppDetails();
+                    const updatedApp = await fetchAppData();
                     populateForm(updatedApp);
-                } catch (err) {
-                    showMessage('❌ ' + err.message, 'error');
-                    showToast('Erreur : ' + err.message, 'error');
-                } finally {
-                    setLoading(saveBtn, false);
-                }
-            }
-
-            // ===== Soumettre pour validation (POST /submit) =====
-            async function submitForValidation() {
-                setLoading(submitBtn, true);
-                try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/submit`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    const data = await resp.json();
-                    if (!resp.ok || !data.success) {
-                        throw new Error(data.message || 'Erreur lors de la soumission.');
-                    }
-                    showMessage('✅ Application soumise à APPNET pour validation !', 'success');
-                    showToast('Soumission réussie !', 'success');
-                    const updatedApp = await fetchAppDetails();
-                    populateForm(updatedApp);
-                } catch (err) {
-                    showMessage('❌ ' + err.message, 'error');
-                    showToast('Erreur : ' + err.message, 'error');
-                } finally {
-                    setLoading(submitBtn, false);
-                }
-            }
-
-            // ===== Upload des médias (icône + screenshots) via /:id/media =====
-            async function uploadMedia(logoFile = null, screenshotsFiles = []) {
-                const formData = new FormData();
-                if (logoFile) {
-                    formData.append('logo', logoFile);
-                }
-                if (screenshotsFiles.length > 0) {
-                    for (const file of screenshotsFiles) {
-                        formData.append('screenshots', file);
-                    }
-                }
-
-                const resp = await fetch(`${API_BASE}/apps/${appId}/media`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                        // Ne pas mettre Content-Type
-                    },
-                    body: formData
-                });
-                const data = await resp.json();
-                if (!resp.ok || !data.success) {
-                    throw new Error(data.message || 'Erreur lors de l\'upload des médias.');
-                }
-                return data.data;
-            }
-
-            // ===== Upload de l'icône =====
-            async function uploadIcon() {
-                if (iconInput.files.length === 0) {
-                    showToast('Veuillez sélectionner une image.', 'error');
-                    return;
-                }
-                const file = iconInput.files[0];
-                setLoading(uploadIconBtn, true);
-                try {
-                    await uploadMedia(file, []);
-                    showToast('Icône modifiée avec succès !', 'success');
-                    // Recharger l'app pour afficher la nouvelle icône
-                    const updatedApp = await fetchAppDetails();
-                    populateForm(updatedApp);
-                    // Réinitialiser le champ
+                    // Réinitialiser les champs de fichiers
                     iconInput.value = '';
                     iconFilename.textContent = 'Aucun fichier sélectionné';
                     iconPreview.innerHTML = '';
-                } catch (err) {
-                    showToast('Erreur : ' + err.message, 'error');
-                } finally {
-                    setLoading(uploadIconBtn, false);
-                }
-            }
-
-            // ===== Upload des screenshots =====
-            async function uploadScreenshots() {
-                if (screenshotsInput.files.length === 0) {
-                    showToast('Veuillez sélectionner au moins une image.', 'error');
-                    return;
-                }
-                const files = screenshotsInput.files;
-                if (files.length > 8) {
-                    showToast('Vous pouvez sélectionner jusqu\'à 8 captures.', 'error');
-                    return;
-                }
-                const fileArray = Array.from(files);
-                setLoading(uploadScreenshotsBtn, true);
-                try {
-                    await uploadMedia(null, fileArray);
-                    showToast('Captures ajoutées avec succès !', 'success');
-                    // Recharger l'app pour afficher les nouvelles captures
-                    const updatedApp = await fetchAppDetails();
-                    populateForm(updatedApp);
-                    // Réinitialiser le champ
                     screenshotsInput.value = '';
                     screenshotsFilename.textContent = 'Aucun fichier sélectionné';
+                    // Les screenshots existants restent affichés
                 } catch (err) {
+                    showMessage('❌ ' + err.message, 'error');
                     showToast('Erreur : ' + err.message, 'error');
                 } finally {
-                    setLoading(uploadScreenshotsBtn, false);
+                    setLoading(false);
                 }
-            }
-
-            // ===== Événements =====
-            saveBtn.addEventListener('click', saveChanges);
-            submitBtn.addEventListener('click', submitForValidation);
-            uploadIconBtn.addEventListener('click', uploadIcon);
-            uploadScreenshotsBtn.addEventListener('click', uploadScreenshots);
+            });
 
             // ===== Chargement initial =====
             (async function init() {
                 try {
-                    const app = await fetchAppDetails();
+                    const app = await fetchAppData();
                     populateForm(app);
                 } catch (err) {
                     document.getElementById('appName').textContent = 'Erreur de chargement';

@@ -1,0 +1,777 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Détail de l'application</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.05), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.06;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.04; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.04; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header .logo .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .header .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .back-btn {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header .back-btn:hover {
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #9ca3af;
+        }
+        .loading-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #60a5fa;
+        }
+        .loading-state .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #f87171;
+        }
+        .error-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .app-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            animation: fadeUp 0.6s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .app-detail .left {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .app-detail .right {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .app-card:hover {
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .app-header {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+        .app-header .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #1a1f36;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .app-header .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .app-header .logo .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #6b7280;
+        }
+        .app-header .info h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+        .app-header .info .package {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+        .app-header .info .category {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.2rem 1rem;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .app-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .meta-item .label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .meta-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 2px;
+        }
+
+        .description .short {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .description .long {
+            color: #d1d5db;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-top: 0.8rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        .screenshot-item {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            aspect-ratio: 9 / 16;
+            background: #1a1f36;
+            transition: all 0.3s ease;
+        }
+        .screenshot-item:hover {
+            transform: scale(1.04);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+        }
+        .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .versions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .version-item .vname {
+            font-weight: 600;
+            color: #fff;
+        }
+        .version-item .vcode {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+        .version-item .vformat {
+            font-size: 0.7rem;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 2px 10px;
+            border-radius: 40px;
+            text-transform: uppercase;
+        }
+        .version-item .vmeta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+        .version-item .vmeta .size {
+            font-family: monospace;
+        }
+
+        .developer-info .dev-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .developer-info .dev-item:last-child {
+            border-bottom: none;
+        }
+        .developer-info .dev-item .label {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+        .developer-info .dev-item .value {
+            color: #d1d5db;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        .download-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(16, 185, 129, 0.5);
+        }
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .download-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .download-btn.loading .spinner {
+            display: inline-block;
+        }
+        .download-btn.loading .btn-text {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 16px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: none;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease-out;
+        }
+        .toast.show { display: block; }
+        .toast.success { border-left: 4px solid #34d399; }
+        .toast.error { border-left: 4px solid #f87171; }
+        .toast.info { border-left: 4px solid #60a5fa; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .app-detail { grid-template-columns: 1fr; }
+            .app-header { flex-direction: column; align-items: center; text-align: center; }
+            .app-meta { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 640px) {
+            .header { padding: 0.6rem 1rem; }
+            .container { padding: 1rem; }
+            .app-card { padding: 1.2rem; }
+            .app-meta { grid-template-columns: 1fr; }
+            .app-header .logo { width: 64px; height: 64px; }
+            .app-header .info h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.04;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.03;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.04;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.03;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="logo">
+            <div class="icon">A</div>
+            <h1>APPNET</h1>
+        </div>
+        <a href="store.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour au store</a>
+    </header>
+
+    <!-- ===== CONTENU ===== -->
+    <div class="container" id="appContainer">
+        <div class="loading-state">
+            <i class="fas fa-spinner spinner"></i>
+            <p>Chargement des détails...</p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"><span id="toastMessage">Message</span></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const container = document.getElementById('appContainer');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            let toastTimeout;
+
+            function showToast(text, type = 'info') {
+                toast.className = `toast ${type} show`;
+                toastMessage.textContent = text;
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+
+            // Récupérer l'ID depuis l'URL
+            const params = new URLSearchParams(window.location.search);
+            const appId = params.get('id');
+
+            if (!appId) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>ID de l'application manquant.</p>
+                        <a href="store.html" style="color:#60a5fa;text-decoration:underline;">Retour au store</a>
+                    </div>
+                `;
+                throw new Error('ID manquant');
+            }
+
+            let appData = null;
+            let latestVersionId = null;
+
+            // Formatter la taille
+            function formatSize(bytes) {
+                if (!bytes) return 'N/A';
+                const units = ['B', 'KB', 'MB', 'GB'];
+                let i = 0;
+                let size = bytes;
+                while (size >= 1024 && i < units.length - 1) {
+                    size /= 1024;
+                    i++;
+                }
+                return size.toFixed(1) + ' ' + units[i];
+            }
+
+            // Formater la date
+            function formatDate(dateStr) {
+                if (!dateStr) return 'N/A';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }
+
+            // Récupérer les détails de l'application
+            async function fetchAppDetails() {
+                try {
+                    const resp = await fetch(`${API_BASE}/public/apps/${appId}`);
+                    if (!resp.ok) {
+                        const err = await resp.json().catch(() => ({}));
+                        if (resp.status === 404) throw new Error('Application introuvable');
+                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                    return data.app;
+                } catch (err) {
+                    console.error('Erreur fetchAppDetails:', err);
+                    throw err;
+                }
+            }
+
+            // Fonction de téléchargement
+            async function downloadApp() {
+                if (!appId || !latestVersionId) {
+                    showToast('Impossible de télécharger : version non disponible.', 'error');
+                    return;
+                }
+
+                const btn = document.getElementById('downloadBtn');
+                btn.disabled = true;
+                btn.classList.add('loading');
+                btn.innerHTML = `<span class="spinner"></span><span class="btn-text">Préparation...</span>`;
+
+                try {
+                    const resp = await fetch(`${API_BASE}/apps/${appId}/download/${latestVersionId}`);
+                    if (!resp.ok) {
+                        const err = await resp.json().catch(() => ({}));
+                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+
+                    const downloadUrl = data.download?.url;
+                    if (!downloadUrl) throw new Error('URL de téléchargement introuvable.');
+
+                    // Lancer le téléchargement
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `${appData.title || 'app'}_v${data.download.version_name}.${data.download.format || 'apk'}`;
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showToast(`✅ Téléchargement de ${data.download.app_name || appData.title} lancé !`, 'success');
+                } catch (err) {
+                    console.error('Erreur download:', err);
+                    showToast('❌ ' + err.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    btn.innerHTML = `<i class="fas fa-download"></i> Télécharger (${appData.versions?.[0]?.version_name || 'Dernière version'})`;
+                }
+            }
+
+            // Afficher les détails
+            function renderApp(app) {
+                appData = app;
+                const logoHtml = app.logo ?
+                    `<img src="${app.logo}" alt="${app.title}" />` :
+                    `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+
+                // Déterminer la dernière version
+                const versions = app.versions || [];
+                const latest = versions.length > 0 ? versions[0] : null;
+                if (latest) latestVersionId = latest.id;
+
+                // Captures d'écran
+                let screenshotsHtml = '';
+                if (app.screenshots && app.screenshots.length > 0) {
+                    screenshotsHtml = app.screenshots.map(s =>
+                        `<div class="screenshot-item"><img src="${s.image_url}" alt="Capture" /></div>`
+                    ).join('');
+                } else {
+                    screenshotsHtml = `<p style="color:#6b7280;">Aucune capture</p>`;
+                }
+
+                // Versions
+                let versionsHtml = '';
+                if (versions.length > 0) {
+                    versionsHtml = versions.map(v => `
+                        <div class="version-item">
+                            <div>
+                                <span class="vname">${v.version_name}</span>
+                                <span class="vcode">(code ${v.version_code})</span>
+                                <span class="vformat">${v.file_format}</span>
+                            </div>
+                            <div class="vmeta">
+                                <span class="size">${formatSize(v.file_size_bytes)}</span>
+                                <span style="font-size:0.7rem;color:#6b7280;">${formatDate(v.created_at)}</span>
+                            </div>
+                            ${v.changelog ? `<div style="width:100%;margin-top:4px;font-size:0.85rem;color:#9ca3af;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">${v.changelog}</div>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    versionsHtml = `<p style="color:#6b7280;">Aucune version disponible</p>`;
+                }
+
+                // Développeur
+                const dev = app.developer || {};
+
+                // Bouton télécharger
+                const downloadBtnHtml = (latest) ? `
+                    <button class="download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i> Télécharger (${latest.version_name})
+                    </button>
+                ` : `
+                    <div style="text-align:center;color:#6b7280;padding:1rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.04);">
+                        <i class="fas fa-ban"></i> Aucune version disponible
+                    </div>
+                `;
+
+                container.innerHTML = `
+                    <div class="app-detail">
+                        <div class="left">
+                            <!-- Carte principale -->
+                            <div class="app-card">
+                                <div class="app-header">
+                                    <div class="logo">${logoHtml}</div>
+                                    <div class="info">
+                                        <h1>${app.title}</h1>
+                                        <div class="package">${app.package_name}</div>
+                                        <span class="category">${app.category || 'Non catégorisé'}</span>
+                                    </div>
+                                </div>
+
+                                <div class="app-meta">
+                                    <div class="meta-item">
+                                        <span class="label">Téléchargements</span>
+                                        <span class="value">${(app.downloads || 0).toLocaleString()}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Date d'ajout</span>
+                                        <span class="value">${formatDate(app.created_at)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="description">
+                                    <div class="short">${app.description?.short || 'Aucune description courte'}</div>
+                                    <div class="long">${app.description?.long || 'Aucune description longue'}</div>
+                                </div>
+                            </div>
+
+                            <!-- Développeur -->
+                            <div class="app-card">
+                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Développeur</h3>
+                                <div class="developer-info">
+                                    <div class="dev-item"><span class="label">Entreprise</span><span class="value">${dev.company_name || 'Non renseigné'}</span></div>
+                                    <div class="dev-item"><span class="label">Email</span><span class="value">${dev.email || 'N/A'}</span></div>
+                                    <div class="dev-item"><span class="label">Pays</span><span class="value">${dev.country || 'N/A'}</span></div>
+                                    <div class="dev-item"><span class="label">Téléphone</span><span class="value">${dev.phone || 'N/A'}</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="right">
+                            <!-- Captures d'écran -->
+                            <div class="app-card">
+                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Captures d'écran</h3>
+                                <div class="screenshots-grid">${screenshotsHtml}</div>
+                            </div>
+
+                            <!-- Versions + téléchargement -->
+                            <div class="app-card">
+                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Versions disponibles</h3>
+                                <div class="versions-list">${versionsHtml}</div>
+                                ${downloadBtnHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Attacher l'événement au bouton de téléchargement
+                const btn = document.getElementById('downloadBtn');
+                if (btn) {
+                    btn.addEventListener('click', downloadApp);
+                }
+            }
+
+            // Chargement initial
+            async function init() {
+                try {
+                    container.innerHTML = `
+                        <div class="loading-state">
+                            <i class="fas fa-spinner spinner"></i>
+                            <p>Chargement des détails...</p>
+                        </div>
+                    `;
+                    const app = await fetchAppDetails();
+                    renderApp(app);
+                } catch (err) {
+                    container.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>${err.message || 'Impossible de charger les détails.'}</p>
+                            <a href="store.html" style="color:#60a5fa;text-decoration:underline;margin-top:1rem;display:inline-block;">Retour au store</a>
+                        </div>
+                    `;
+                }
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
+
+

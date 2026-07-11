@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Store d'applications Android</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== FOND ANIMÉ ===== */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.05), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.06;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.04; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.04; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header .logo .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+        .header .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .search {
+            flex: 1;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 60px;
+            padding: 0.4rem 0.8rem;
+            transition: all 0.3s;
+        }
+        .header .search:focus-within {
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .header .search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 0.3rem 0.5rem;
+        }
+        .header .search input::placeholder {
+            color: #6b7280;
+        }
+        .header .search i {
+            color: #6b7280;
+            padding: 0 0.5rem;
+        }
+
+        .header .actions {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .header .actions a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .header .actions a:hover {
+            color: #fff;
+        }
+        .header .actions .btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .header .actions .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+        .header .actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ===== BANNIERE ANNONCES ===== */
+        .banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            animation: fadeUp 0.6s ease-out;
+        }
+        .banner .text h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .banner .text p {
+            color: #9ca3af;
+            margin-top: 0.3rem;
+        }
+        .banner .btn {
+            padding: 0.6rem 2rem;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .banner .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CATÉGORIES ===== */
+        .category-section {
+            margin-bottom: 2.5rem;
+        }
+        .category-section .title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .category-section .title .badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            font-size: 0.8rem;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+        .app-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.1);
+        }
+        .app-card .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #1a1f36;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+            margin-bottom: 0.8rem;
+        }
+        .app-card .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .app-card .logo .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #6b7280;
+        }
+        .app-card .name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .app-card .category-tag {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-top: 0.2rem;
+        }
+        .app-card .downloads {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .app-card .downloads i {
+            font-size: 0.7rem;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #9ca3af;
+        }
+        .loading-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #60a5fa;
+        }
+        .loading-state .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #f87171;
+        }
+        .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 0.8rem 1rem; }
+            .header .search { max-width: 100%; order: 3; flex-basis: 100%; margin-top: 0.5rem; }
+            .container { padding: 1rem; }
+            .banner { padding: 1.5rem; }
+            .apps-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.04;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.03;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.04;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.03;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="logo">
+            <div class="icon">A</div>
+            <h1>APPNET</h1>
+        </div>
+        <div class="search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Rechercher une application..." />
+        </div>
+        <div class="actions">
+            <a href="#">Se connecter</a>
+            <a href="#" class="btn btn-primary">S'inscrire</a>
+        </div>
+    </header>
+
+    <!-- ===== CONTENU ===== -->
+    <div class="container" id="appContainer">
+
+        <!-- Bannière annonces -->
+        <div class="banner">
+            <div class="text">
+                <h2>🔥 Applications à la une</h2>
+                <p>Découvrez les applications les plus populaires du moment sur APPNET.</p>
+            </div>
+            <button class="btn" id="bannerBtn">Voir les nouveautés</button>
+        </div>
+
+        <div id="appsContent">
+            <div class="loading-state">
+                <i class="fas fa-spinner spinner"></i>
+                <p>Chargement des applications...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const API_BASE = 'http://localhost:5000/api';
+            const container = document.getElementById('appsContent');
+            const searchInput = document.getElementById('searchInput');
+
+            let allApps = [];
+            let filteredApps = [];
+
+            // Récupérer les applications
+            async function fetchApps() {
+                try {
+                    const resp = await fetch(`${API_BASE}/public/apps`);
+                    if (!resp.ok) {
+                        const err = await resp.json().catch(() => ({}));
+                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                    return data.apps || [];
+                } catch (err) {
+                    console.error('Erreur fetchApps:', err);
+                    throw err;
+                }
+            }
+
+            // Grouper par catégorie
+            function groupByCategory(apps) {
+                const groups = {};
+                apps.forEach(app => {
+                    const cat = app.category || 'Autre';
+                    if (!groups[cat]) groups[cat] = [];
+                    groups[cat].push(app);
+                });
+                // Trier les catégories par nombre d'apps décroissant
+                const sorted = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+                const result = {};
+                sorted.forEach(key => { result[key] = groups[key]; });
+                return result;
+            }
+
+            // Rendre les applications
+            function renderApps(apps) {
+                if (!apps || apps.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state" style="text-align:center; padding:4rem 1rem; color:#9ca3af;">
+                            <i class="fas fa-inbox" style="font-size:3rem; color:#6b7280;"></i>
+                            <p>Aucune application trouvée</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const grouped = groupByCategory(apps);
+                let html = '';
+                for (const [category, appsList] of Object.entries(grouped)) {
+                    html += `
+                        <div class="category-section">
+                            <div class="title">
+                                ${category}
+                                <span class="badge">${appsList.length}</span>
+                            </div>
+                            <div class="apps-grid">
+                    `;
+                    appsList.forEach(app => {
+                        const logoHtml = app.logo_url ?
+                            `<img src="${app.logo_url}" alt="${app.title}" />` :
+                            `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+                        const downloads = app.downloads_count || 0;
+                        html += `
+                            <a href="app-detail.html?id=${app.id}" class="app-card">
+                                <div class="logo">${logoHtml}</div>
+                                <div class="name">${app.title || app.package_name}</div>
+                                <div class="category-tag">${app.category || 'Non catégorisé'}</div>
+                                <div class="downloads"><i class="fas fa-download"></i> ${downloads.toLocaleString()}</div>
+                            </a>
+                        `;
+                    });
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+
+            // Filtrer par recherche
+            function filterApps(query) {
+                if (!query.trim()) {
+                    renderApps(allApps);
+                    return;
+                }
+                const lower = query.toLowerCase();
+                const filtered = allApps.filter(app =>
+                    (app.title && app.title.toLowerCase().includes(lower)) ||
+                    (app.package_name && app.package_name.toLowerCase().includes(lower)) ||
+                    (app.category && app.category.toLowerCase().includes(lower))
+                );
+                renderApps(filtered);
+            }
+
+            // Initialisation
+            async function init() {
+                try {
+                    container.innerHTML = `
+                        <div class="loading-state">
+                            <i class="fas fa-spinner spinner"></i>
+                            <p>Chargement des applications...</p>
+                        </div>
+                    `;
+                    allApps = await fetchApps();
+                    renderApps(allApps);
+                } catch (err) {
+                    container.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>${err.message || 'Impossible de charger les applications.'}</p>
+                            <button onclick="location.reload()" style="margin-top:1rem;padding:8px 24px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.3);border-radius:40px;color:#60a5fa;cursor:pointer;">Réessayer</button>
+                        </div>
+                    `;
+                }
+            }
+
+            // Événements
+            searchInput.addEventListener('input', function() {
+                filterApps(this.value);
+            });
+
+            // Bannière "Voir les nouveautés" – redirige vers la recherche des plus récents (par exemple)
+            document.getElementById('bannerBtn').addEventListener('click', function() {
+                // Simplement défiler vers les applications
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            init();
+        })();
+    </script>
+</body>
+</html>
+
