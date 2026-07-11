@@ -590,7 +590,7 @@
     <div class="container">
         <div class="card">
             <div class="card-title"><i class="fas fa-edit"></i> Modifier l'application</div>
-            <div class="card-subtitle">Modifiez les informations de votre application, son icône et ses captures d'écran.</div>
+            <div class="card-subtitle">Modifiez les informations, l'icône et les captures d'écran de votre application.</div>
 
             <!-- Résumé de l'application -->
             <div id="appSummary" class="app-summary">
@@ -674,7 +674,9 @@
                         <input type="file" id="screenshotsInput" accept="image/*" multiple />
                     </div>
                     <button type="button" class="btn-upload" id="uploadScreenshotsBtn">Ajouter les captures</button>
-                    <div id="screenshotsPreview" class="image-preview"></div>
+                    <div id="screenshotsPreview" class="image-preview">
+                        <span style="color:#6b7280;font-size:0.8rem;">Chargement...</span>
+                    </div>
                 </div>
 
                 <!-- Boutons d'action -->
@@ -808,7 +810,6 @@
                     if (!multiple) {
                         const file = input.files[0];
                         filenameEl.textContent = file.name;
-                        // Aperçu
                         if (previewEl) {
                             const reader = new FileReader();
                             reader.onload = (e) => {
@@ -839,39 +840,12 @@
             setupUpload(iconUploadArea, iconInput, iconFilename, iconPreview, false);
             setupUpload(screenshotsUploadArea, screenshotsInput, screenshotsFilename, screenshotsPreview, true);
 
-            // ===== Récupérer les données de l'application =====
-            async function fetchAppData() {
+            // ===== Récupérer les données de l'application (détails complets) =====
+            async function fetchAppDetails() {
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/my-apps`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (!resp.ok) {
-                        const err = await resp.json().catch(() => ({}));
-                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
-                    }
-                    const data = await resp.json();
-                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
-                    const apps = data.apps || [];
-                    const app = apps.find(a => a.id == appId);
-                    if (!app) throw new Error('Application introuvable.');
-                    return app;
-                } catch (err) {
-                    console.error('Erreur fetchAppData:', err);
-                    throw err;
-                }
-            }
-
-            // ===== Récupérer les screenshots (depuis l'API de détail) =====
-            async function fetchScreenshots() {
-                try {
-                    // On utilise la route /api/apps/my-apps qui ne donne pas les screenshots.
-                    // On appelle la route /api/apps/:id (détail) si elle existe.
-                    // Sinon, on peut utiliser la route /api/apps/:id/screenshots si elle existe.
-                    // Ici on fait appel à /api/apps/:id en supposant que la route GET /api/apps/:id existe pour le dev.
-                    // Sinon, on utilisera la route /api/apps/:id/screenshots.
+                    // Utiliser la route GET /api/apps/:id pour récupérer les détails (screenshots inclus)
+                    // Si cette route n'est pas disponible pour les devs, on utilise /apps/my-apps + un autre appel
+                    // Ici on tente /api/apps/:id
                     const resp = await fetch(`${API_BASE}/apps/${appId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -879,16 +853,50 @@
                         }
                     });
                     if (!resp.ok) {
-                        // Si la route n'existe pas, on retourne une liste vide.
-                        return [];
+                        // Fallback: on récupère depuis /apps/my-apps
+                        const fallbackResp = await fetch(`${API_BASE}/apps/my-apps`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (!fallbackResp.ok) {
+                            const err = await fallbackResp.json().catch(() => ({}));
+                            throw new Error(err.message || `Erreur HTTP ${fallbackResp.status}`);
+                        }
+                        const data = await fallbackResp.json();
+                        if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                        const apps = data.apps || [];
+                        const app = apps.find(a => a.id == appId);
+                        if (!app) throw new Error('Application introuvable');
+                        // On essaie de récupérer les screenshots séparément
+                        const screenshots = await fetchScreenshots();
+                        app.screenshots = screenshots;
+                        return app;
                     }
                     const data = await resp.json();
-                    if (data.success && data.app && data.app.screenshots) {
-                        return data.app.screenshots;
-                    }
-                    return [];
+                    if (!data.success || !data.app) throw new Error(data.message || 'Erreur inconnue');
+                    return data.app;
                 } catch (err) {
-                    console.warn('Impossible de récupérer les screenshots:', err);
+                    console.error('Erreur fetchAppDetails:', err);
+                    throw err;
+                }
+            }
+
+            // Récupérer les screenshots depuis /api/apps/:id/screenshots si disponible, sinon via /api/apps/:id
+            async function fetchScreenshots() {
+                try {
+                    const resp = await fetch(`${API_BASE}/apps/${appId}/screenshots`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!resp.ok) return [];
+                    const data = await resp.json();
+                    if (data.success && data.screenshots) return data.screenshots;
+                    return [];
+                } catch (e) {
                     return [];
                 }
             }
@@ -909,12 +917,21 @@
                     screenshotsPreview.innerHTML = `<span style="color:#6b7280;font-size:0.8rem;">Aucune capture</span>`;
                     return;
                 }
-                screenshots.forEach(s => {
+                // On affiche jusqu'à 8 captures
+                const toShow = screenshots.slice(0, 8);
+                toShow.forEach(s => {
                     const div = document.createElement('div');
                     div.className = 'preview-item';
-                    div.innerHTML = `<img src="${s.image_url}" alt="screenshot" />`;
+                    const imgUrl = s.image_url || s;
+                    div.innerHTML = `<img src="${imgUrl}" alt="screenshot" />`;
                     screenshotsPreview.appendChild(div);
                 });
+                if (screenshots.length > 8) {
+                    const span = document.createElement('span');
+                    span.style.cssText = 'color:#6b7280;font-size:0.8rem;display:flex;align-items:center;';
+                    span.textContent = `+${screenshots.length - 8} autres`;
+                    screenshotsPreview.appendChild(span);
+                }
             }
 
             // ===== Remplir le formulaire =====
@@ -943,11 +960,8 @@
                 categorySelect.value = app.category || '';
 
                 // Récupérer les screenshots
-                fetchScreenshots().then(screenshots => {
-                    displayScreenshots(screenshots);
-                }).catch(() => {
-                    displayScreenshots([]);
-                });
+                const screenshots = app.screenshots || [];
+                displayScreenshots(screenshots);
             }
 
             // ===== Enregistrer les modifications (PUT) =====
@@ -981,7 +995,7 @@
                     showMessage('✅ Modifications enregistrées avec succès !', 'success');
                     showToast('Modifications enregistrées !', 'success');
                     // Recharger les données
-                    const updatedApp = await fetchAppData();
+                    const updatedApp = await fetchAppDetails();
                     populateForm(updatedApp);
                 } catch (err) {
                     showMessage('❌ ' + err.message, 'error');
@@ -1008,7 +1022,7 @@
                     }
                     showMessage('✅ Application soumise à APPNET pour validation !', 'success');
                     showToast('Soumission réussie !', 'success');
-                    const updatedApp = await fetchAppData();
+                    const updatedApp = await fetchAppDetails();
                     populateForm(updatedApp);
                 } catch (err) {
                     showMessage('❌ ' + err.message, 'error');
@@ -1018,6 +1032,33 @@
                 }
             }
 
+            // ===== Upload des médias (icône + screenshots) via /:id/media =====
+            async function uploadMedia(logoFile = null, screenshotsFiles = []) {
+                const formData = new FormData();
+                if (logoFile) {
+                    formData.append('logo', logoFile);
+                }
+                if (screenshotsFiles.length > 0) {
+                    for (const file of screenshotsFiles) {
+                        formData.append('screenshots', file);
+                    }
+                }
+
+                const resp = await fetch(`${API_BASE}/apps/${appId}/media`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                        // Ne pas mettre Content-Type
+                    },
+                    body: formData
+                });
+                const data = await resp.json();
+                if (!resp.ok || !data.success) {
+                    throw new Error(data.message || 'Erreur lors de l\'upload des médias.');
+                }
+                return data.data;
+            }
+
             // ===== Upload de l'icône =====
             async function uploadIcon() {
                 if (iconInput.files.length === 0) {
@@ -1025,26 +1066,12 @@
                     return;
                 }
                 const file = iconInput.files[0];
-                const formData = new FormData();
-                formData.append('icon', file);
-
                 setLoading(uploadIconBtn, true);
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/icon`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                            // Ne pas mettre Content-Type, FormData le gère
-                        },
-                        body: formData
-                    });
-                    const data = await resp.json();
-                    if (!resp.ok || !data.success) {
-                        throw new Error(data.message || 'Erreur lors de l\'upload de l\'icône.');
-                    }
+                    await uploadMedia(file, []);
                     showToast('Icône modifiée avec succès !', 'success');
                     // Recharger l'app pour afficher la nouvelle icône
-                    const updatedApp = await fetchAppData();
+                    const updatedApp = await fetchAppDetails();
                     populateForm(updatedApp);
                     // Réinitialiser le champ
                     iconInput.value = '';
@@ -1068,32 +1095,17 @@
                     showToast('Vous pouvez sélectionner jusqu\'à 8 captures.', 'error');
                     return;
                 }
-                const formData = new FormData();
-                for (const file of files) {
-                    formData.append('screenshots', file);
-                }
-
+                const fileArray = Array.from(files);
                 setLoading(uploadScreenshotsBtn, true);
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/screenshots`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: formData
-                    });
-                    const data = await resp.json();
-                    if (!resp.ok || !data.success) {
-                        throw new Error(data.message || 'Erreur lors de l\'ajout des captures.');
-                    }
+                    await uploadMedia(null, fileArray);
                     showToast('Captures ajoutées avec succès !', 'success');
                     // Recharger l'app pour afficher les nouvelles captures
-                    const updatedApp = await fetchAppData();
+                    const updatedApp = await fetchAppDetails();
                     populateForm(updatedApp);
                     // Réinitialiser le champ
                     screenshotsInput.value = '';
                     screenshotsFilename.textContent = 'Aucun fichier sélectionné';
-                    // On recharge les screenshots via populateForm qui appelle fetchScreenshots
                 } catch (err) {
                     showToast('Erreur : ' + err.message, 'error');
                 } finally {
@@ -1110,7 +1122,7 @@
             // ===== Chargement initial =====
             (async function init() {
                 try {
-                    const app = await fetchAppData();
+                    const app = await fetchAppDetails();
                     populateForm(app);
                 } catch (err) {
                     document.getElementById('appName').textContent = 'Erreur de chargement';
