@@ -1,0 +1,905 @@
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Nouvelle version</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        /* ===== FOND ANIMÉ ===== */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.10), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.10;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.06; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.06; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        /* ===== HEADER FIXE ===== */
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header-fixed .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-fixed .left .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .header-fixed .left h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-fixed .right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-fixed .right .back-btn {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .header-fixed .right .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ===== CONTENEUR ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title i {
+            color: #60a5fa;
+        }
+
+        .card-subtitle {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .app-info {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .app-info .app-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-info .app-detail .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .app-info .app-detail .info .name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .app-info .app-detail .info .package {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+
+        .app-info .version-count {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        /* ===== FORMULAIRE ===== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        .form-group label .required {
+            color: #f87171;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.10);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #6b7280;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* ===== FILE UPLOAD ===== */
+        .file-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.8rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .file-upload-area:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .file-upload-area .icon {
+            font-size: 2.8rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-area .label {
+            font-size: 0.95rem;
+            color: #9ca3af;
+        }
+
+        .file-upload-area .filename {
+            font-size: 0.85rem;
+            color: #60a5fa;
+            margin-top: 0.5rem;
+            word-break: break-all;
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .progress-container .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-container .progress-header .percent {
+            font-weight: 600;
+            color: #60a5fa;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .progress-container .progress-status {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* ===== BOUTON ===== */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            border-radius: 60px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-submit.loading .spinner {
+            display: inline-block;
+        }
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== MESSAGE ===== */
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .message.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .message.info {
+            display: block;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding-top: 70px; }
+            .header-fixed { padding: 0.6rem 1rem; }
+            .header-fixed .left h1 { font-size: 1.1rem; }
+            .container { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .app-info { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 500px) {
+            .header-fixed .left h1 { font-size: 1rem; }
+            .header-fixed .right .back-btn { font-size: 0.8rem; padding: 6px 14px; }
+            .card { padding: 1.2rem; }
+            .card-title { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FOND ANIMÉ ===== -->
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.06;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.05;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.07;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.06;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <!-- ===== HEADER FIXE ===== -->
+    <header class="header-fixed">
+        <div class="left">
+            <div class="logo-icon">A</div>
+            <h1>APPNET · Nouvelle version</h1>
+        </div>
+        <div class="right">
+            <a href="dashbord.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+        </div>
+    </header>
+
+    <!-- ===== CONTENU ===== -->
+    <div class="container">
+        <div class="card">
+            <div class="card-title"><i class="fas fa-code-branch"></i> Envoyer une version</div>
+            <div class="card-subtitle">Publiez une nouvelle version de votre application.</div>
+
+            <!-- Infos de l'application -->
+            <div id="appInfo" class="app-info">
+                <div class="app-detail">
+                    <div class="icon"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="info">
+                        <div class="name" id="appTitle">Chargement...</div>
+                        <div class="package" id="appPackage">com.exemple.app</div>
+                    </div>
+                </div>
+                <div class="version-count" id="versionCount">0 versions</div>
+            </div>
+
+            <!-- Formulaire -->
+            <form id="versionForm" autocomplete="off">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom de la version <span class="required">*</span></label>
+                        <input type="text" name="version_name" placeholder="Ex: 1.0.0" required />
+                        <small style="color:#6b7280;font-size:0.7rem;">Le nom affiché de la version</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Code de version <span class="required">*</span></label>
+                        <input type="number" name="version_code" placeholder="Ex: 1" required />
+                        <small style="color:#6b7280;font-size:0.7rem;">Le code numérique (doit être supérieur à la dernière version)</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fichier (APK / XAPK / AAB / APKS) <span class="required">*</span></label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="icon"><i class="fas fa-file-archive"></i></div>
+                        <div class="label">Cliquez ou glissez pour déposer votre fichier</div>
+                        <div class="filename" id="fileFilename">Aucun fichier sélectionné</div>
+                        <input type="file" id="fileInput" accept=".apk,.xapk,.aab,.apks" />
+                    </div>
+                    <small style="color:#6b7280;font-size:0.7rem;">Formats acceptés : APK, XAPK, AAB, APKS</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Journal des modifications</label>
+                    <textarea name="changelog" placeholder="Décrivez les nouveautés de cette version..."></textarea>
+                </div>
+
+                <!-- Barre de progression -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <span>Téléchargement...</span>
+                        <span class="percent" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-status" id="progressStatus">Préparation...</div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="btn-text"><i class="fas fa-upload"></i> Publier la version</span>
+                    <span class="spinner"></span>
+                </button>
+            </form>
+
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const token = localStorage.getItem('token');
+
+            // Récupérer l'ID depuis l'URL
+            const params = new URLSearchParams(window.location.search);
+            const appId = params.get('appId');
+
+            if (!token) {
+                window.location.href = '../connexion.html';
+                return;
+            }
+
+            if (!appId) {
+                document.getElementById('appTitle').textContent = 'ID manquant';
+                document.getElementById('appPackage').textContent = 'Veuillez spécifier l\'application.';
+                document.querySelector('.card-subtitle').textContent = 'Erreur : aucun ID d\'application fourni.';
+                return;
+            }
+
+            // Éléments DOM
+            const form = document.getElementById('versionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            const fileInput = document.getElementById('fileInput');
+            const fileFilename = document.getElementById('fileFilename');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+
+            // Progress elements
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressStatus = document.getElementById('progressStatus');
+
+            // Affichage des infos
+            const appTitle = document.getElementById('appTitle');
+            const appPackage = document.getElementById('appPackage');
+            const versionCount = document.getElementById('versionCount');
+
+            let lastVersionCode = 0; // Stocke la dernière version code
+            let versionsList = [];
+
+            // Fonctions
+            function showMessage(text, type = 'error') {
+                messageDiv.textContent = text;
+                messageDiv.className = `message ${type}`;
+                clearTimeout(window.messageTimeout);
+                window.messageTimeout = setTimeout(() => {
+                    messageDiv.className = 'message';
+                }, 8000);
+            }
+
+            function setLoading(loading) {
+                if (loading) {
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                } else {
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                }
+            }
+
+            // Mise à jour de la barre de progression
+            function updateProgress(percent, status) {
+                progressContainer.style.display = 'block';
+                progressFill.style.width = percent + '%';
+                progressPercent.textContent = percent + '%';
+                if (status) {
+                    progressStatus.textContent = status;
+                }
+            }
+
+            function resetProgress() {
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+                progressPercent.textContent = '0%';
+                progressStatus.textContent = 'Préparation...';
+            }
+
+            // Récupérer les infos de l'application et les versions
+            async function fetchAppInfo() {
+                try {
+                    const resp = await fetch(`${API_BASE}/apps/my-apps`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!resp.ok) {
+                        throw new Error('Impossible de récupérer les informations de l\'application.');
+                    }
+                    const data = await resp.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Erreur inconnue');
+                    }
+                    const apps = data.apps || [];
+                    const app = apps.find(a => a.id == appId);
+                    if (!app) {
+                        throw new Error('Application introuvable.');
+                    }
+                    appTitle.textContent = app.title || app.package_name || 'Sans nom';
+                    appPackage.textContent = app.package_name || 'N/A';
+
+                    // Récupérer les versions
+                    const versionResp = await fetch(`${API_BASE}/apps/${appId}/versions`);
+                    const versionData = await versionResp.json();
+                    if (versionData.success && versionData.versions) {
+                        versionsList = versionData.versions;
+                        const count = versionsList.length;
+                        versionCount.textContent = `${count} version${count > 1 ? 's' : ''}`;
+                        // Trouver le dernier code de version
+                        if (count > 0) {
+                            // Trier par version_code décroissant
+                            const sorted = [...versionsList].sort((a, b) => b.version_code - a.version_code);
+                            lastVersionCode = Number(sorted[0].version_code);
+                            console.log('Dernier version_code:', lastVersionCode);
+                        } else {
+                            lastVersionCode = 0;
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Erreur fetchAppInfo:', error);
+                    appTitle.textContent = 'Erreur de chargement';
+                    appPackage.textContent = 'Veuillez réessayer';
+                    versionCount.textContent = '⚠️';
+                }
+            }
+
+            // Gestion du fichier
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = '#3b82f6';
+            });
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.style.borderColor = 'rgba(255,255,255,0.1)';
+            });
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'rgba(255,255,255,0.1)';
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length === 0) {
+                    fileFilename.textContent = 'Aucun fichier sélectionné';
+                    return;
+                }
+                const file = fileInput.files[0];
+                fileFilename.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                // Réinitialiser les messages
+                messageDiv.className = 'message';
+            });
+
+            // Soumission du formulaire avec progression
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                messageDiv.className = 'message';
+                resetProgress();
+
+                const versionName = form.querySelector('input[name="version_name"]').value.trim();
+                const versionCode = form.querySelector('input[name="version_code"]').value.trim();
+                const changelog = form.querySelector('textarea[name="changelog"]').value.trim();
+                const file = fileInput.files[0];
+
+                // Validation
+                if (!versionName) {
+                    showMessage('Veuillez saisir un nom de version.', 'error');
+                    return;
+                }
+                if (!versionCode) {
+                    showMessage('Veuillez saisir un code de version.', 'error');
+                    return;
+                }
+
+                const versionCodeNum = Number(versionCode);
+                if (isNaN(versionCodeNum) || versionCodeNum <= 0) {
+                    showMessage('Le code de version doit être un nombre positif.', 'error');
+                    return;
+                }
+
+                // ✅ Vérification de la version : doit être supérieure à la dernière
+                if (lastVersionCode > 0 && versionCodeNum <= lastVersionCode) {
+                    showMessage(
+                        `❌ Le code de version (${versionCodeNum}) doit être supérieur à la dernière version (${lastVersionCode}). Veuillez incrémenter le code.`,
+                        'error'
+                    );
+                    // Mettre en surbrillance le champ
+                    const codeInput = form.querySelector('input[name="version_code"]');
+                    codeInput.style.borderColor = '#f87171';
+                    codeInput.focus();
+                    return;
+                }
+                // Réinitialiser la bordure
+                form.querySelector('input[name="version_code"]').style.borderColor = '';
+
+                if (!file) {
+                    showMessage('Veuillez sélectionner un fichier.', 'error');
+                    return;
+                }
+
+                // Vérifier l'extension
+                const ext = file.name.split('.').pop().toLowerCase();
+                const allowed = ['apk', 'xapk', 'aab', 'apks'];
+                if (!allowed.includes(ext)) {
+                    showMessage('Format de fichier non accepté. Utilisez APK, XAPK, AAB ou APKS.', 'error');
+                    return;
+                }
+
+                // Préparer FormData
+                const formData = new FormData();
+                formData.append('version_name', versionName);
+                formData.append('version_code', versionCode);
+                if (changelog) {
+                    formData.append('changelog', changelog);
+                }
+                formData.append('file', file);
+
+                // Désactiver le bouton et afficher la progression
+                setLoading(true);
+                updateProgress(0, 'Démarrage de l\'upload...');
+
+                try {
+                    // Utilisation de XMLHttpRequest pour suivre la progression
+                    const xhr = new XMLHttpRequest();
+
+                    // Progression du téléchargement
+                    xhr.upload.addEventListener('progress', (event) => {
+                        if (event.lengthComputable) {
+                            const percent = Math.round((event.loaded / event.total) * 100);
+                            updateProgress(percent, `Téléchargement en cours... ${percent}%`);
+                            if (percent === 100) {
+                                updateProgress(100, 'Téléchargement terminé, traitement...');
+                            }
+                        }
+                    });
+
+                    // Réponse
+                    const promise = new Promise((resolve, reject) => {
+                        xhr.onload = function() {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                resolve({
+                                    ok: xhr.status >= 200 && xhr.status < 300,
+                                    status: xhr.status,
+                                    data: response
+                                });
+                            } catch (e) {
+                                reject(new Error('Erreur de parsing JSON'));
+                            }
+                        };
+                        xhr.onerror = function() {
+                            reject(new Error('Erreur réseau'));
+                        };
+                        xhr.onabort = function() {
+                            reject(new Error('Upload annulé'));
+                        };
+                    });
+
+                    // Ouvrir la requête
+                    xhr.open('POST', `${API_BASE}/apps/${appId}/version`);
+                    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                    // Ne pas définir Content-Type, car FormData le gère
+
+                    // Envoyer
+                    xhr.send(formData);
+
+                    // Attendre la réponse
+                    const result = await promise;
+
+                    if (result.ok && result.data.success) {
+                        updateProgress(100, '✅ Version publiée avec succès !');
+                        showMessage('✅ Version publiée avec succès ! Redirection en cours...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'dashbord.html';
+                        }, 2000);
+                    } else {
+                        const msg = result.data.message || 'Erreur lors de l\'envoi de la version.';
+                        showMessage('❌ ' + msg, 'error');
+                        resetProgress();
+                    }
+                } catch (error) {
+                    console.error('Erreur upload:', error);
+                    showMessage('❌ ' + error.message || 'Impossible de contacter le serveur.', 'error');
+                    resetProgress();
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            // Charger les infos
+            fetchAppInfo();
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,892 @@
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Administration</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 270px;
+            min-height: 100vh;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 1.5rem 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar .logo .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .sidebar .logo h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar .logo .badge {
+            font-size: 0.6rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .sidebar .nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .sidebar .nav .nav-label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            padding: 0.8rem 0.8rem 0.4rem;
+        }
+
+        .sidebar .nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .sidebar .nav .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .sidebar .nav .nav-item .count {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #9ca3af;
+        }
+
+        .sidebar .nav .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .sidebar .nav .nav-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+        }
+
+        .sidebar .nav .nav-item.active .count {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .sidebar .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .sidebar .footer .user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.5rem 0.5rem;
+            border-radius: 12px;
+            color: #d1d5db;
+        }
+
+        .sidebar .footer .user .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .sidebar .footer .user .info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .sidebar .footer .user .info .role {
+            font-size: 0.7rem;
+            color: #9ca3af;
+        }
+
+        .main {
+            margin-left: 270px;
+            flex: 1;
+            padding: 2rem;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.05), transparent 60%),
+                #0a0e1a;
+        }
+
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.06;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.04; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.04; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        .section {
+            display: none;
+            animation: fadeUp 0.4s ease-out;
+        }
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .section-header .subtitle {
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 1.5rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.05);
+        }
+
+        .stat-card .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .stat-card .stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .stat-card .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .stat-card .stat-icon.orange { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+        .stat-card .stat-icon.purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .stat-card .stat-icon.red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .app-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .app-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            transition: all 0.3s ease;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .app-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .app-item .info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .app-item .info .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #1a1f36;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #6b7280;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .app-item .info .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app-item .info .details .name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .app-item .info .details .meta {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .app-item .info .details .meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .app-item .status-badge {
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.pending { background: rgba(251, 146, 60, 0.2); color: #fb923c; }
+        .status-badge.reviewing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .status-badge.published { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-badge.rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .status-badge.suspended { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+
+        .app-item .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .app-item .actions .btn-sm {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-sm.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .btn-sm.blue:hover { background: rgba(59, 130, 246, 0.25); }
+        .btn-sm.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .btn-sm.green:hover { background: rgba(16, 185, 129, 0.25); }
+        .btn-sm.red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .btn-sm.red:hover { background: rgba(239, 68, 68, 0.25); }
+        .btn-sm.gray { background: rgba(107, 114, 128, 0.15); color: #9ca3af; }
+        .btn-sm.gray:hover { background: rgba(107, 114, 128, 0.25); }
+        .btn-sm.yellow { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+        .btn-sm.yellow:hover { background: rgba(251, 146, 60, 0.25); }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9ca3af;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #6b7280;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9ca3af;
+        }
+        .loading-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #60a5fa;
+        }
+        .loading-state .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 16px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: none;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease-out;
+        }
+        .toast.show { display: block; }
+        .toast.success { border-left: 4px solid #34d399; }
+        .toast.error { border-left: 4px solid #f87171; }
+        .toast.info { border-left: 4px solid #60a5fa; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 60;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.5rem 0.8rem;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; padding: 1rem; padding-top: 4rem; }
+            .mobile-toggle { display: flex; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .app-item { flex-direction: column; align-items: stretch; }
+            .app-item .actions { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.04;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.03;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.04;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.03;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="icon">A</div>
+            <h1>APPNET</h1>
+            <span class="badge">Admin</span>
+        </div>
+        <nav class="nav">
+            <div class="nav-label">Navigation</div>
+            <a class="nav-item active" data-section="dashboard" href="#"><i class="fas fa-th-large"></i> Tableau de bord</a>
+            <a class="nav-item" data-section="pending" href="#"><i class="fas fa-clock"></i> En attente <span class="count" id="countPending">0</span></a>
+            <a class="nav-item" data-section="reviewing" href="#"><i class="fas fa-search"></i> En révision <span class="count" id="countReviewing">0</span></a>
+            <a class="nav-item" data-section="published" href="#"><i class="fas fa-check-circle"></i> Publiées <span class="count" id="countPublished">0</span></a>
+            <a class="nav-item" data-section="rejected" href="#"><i class="fas fa-times-circle"></i> Rejetées <span class="count" id="countRejected">0</span></a>
+            <a class="nav-item" data-section="suspended" href="#"><i class="fas fa-ban"></i> Suspendues <span class="count" id="countSuspended">0</span></a>
+            <div class="nav-label" style="margin-top:1rem;">Outils</div>
+            <a class="nav-item" data-section="stats" href="#"><i class="fas fa-chart-simple"></i> Statistiques</a>
+            <a class="nav-item" href="../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
+        </nav>
+        <div class="footer">
+            <div class="user">
+                <div class="avatar">AD</div>
+                <div class="info">
+                    <div class="name">Administrateur</div>
+                    <div class="role">admin@appnet.com</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main" id="mainContent">
+        <div id="appContainer">
+            <div class="loading-state"><i class="fas fa-spinner spinner"></i><p>Chargement du tableau de bord...</p></div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"><span id="toastMessage">Message</span></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const container = document.getElementById('appContainer');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            let toastTimeout;
+
+            const countEls = {
+                pending: document.getElementById('countPending'),
+                reviewing: document.getElementById('countReviewing'),
+                published: document.getElementById('countPublished'),
+                rejected: document.getElementById('countRejected'),
+                suspended: document.getElementById('countSuspended')
+            };
+
+            function showToast(message, type = 'info') {
+                toast.className = `toast ${type} show`;
+                toastMessage.textContent = message;
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => toast.classList.remove('show'), 5000);
+            }
+
+            function formatDate(dateStr) {
+                if (!dateStr) return 'N/A';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }
+
+            async function fetchDashboard() {
+                const resp = await fetch(`${API_BASE}/admin/apps/dashboard`);
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                }
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                return data;
+            }
+
+            // ✅ CORRECTION : reviewed_by = 1 (ID de l'admin)
+            async function updateStatus(appId, status, reviewMessage = null) {
+                const payload = {
+                    status: status,
+                    review_message: reviewMessage,
+                    reviewed_by: 1  // ← ID de l'administrateur
+                };
+                const resp = await fetch(`${API_BASE}/admin/apps/${appId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                }
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                return data.app;
+            }
+
+            function renderDashboard(data) {
+                const { statistics, dashboard } = data;
+
+                countEls.pending.textContent = statistics.pending || 0;
+                countEls.reviewing.textContent = statistics.reviewing || 0;
+                countEls.published.textContent = statistics.published || 0;
+                countEls.rejected.textContent = statistics.rejected || 0;
+                countEls.suspended.textContent = statistics.suspended || 0;
+
+                function renderAppList(apps, status) {
+                    if (!apps || apps.length === 0) {
+                        return `<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucune application avec ce statut</p></div>`;
+                    }
+                    let html = '<div class="app-list">';
+                    apps.forEach(app => {
+                        const badgeClass = status;
+                        const badgeLabel = status === 'pending' ? 'En attente' :
+                                           status === 'reviewing' ? 'En révision' :
+                                           status === 'published' ? 'Publiée' :
+                                           status === 'rejected' ? 'Rejetée' :
+                                           status === 'suspended' ? 'Suspendue' : status;
+
+                        const logoHtml = app.logo_url ? `<img src="${app.logo_url}" alt="${app.title}" />` :
+                                         `<i class="fas fa-mobile-alt"></i>`;
+
+                        const meta = [];
+                        if (app.category) meta.push(`<span><i class="fas fa-tag"></i> ${app.category}</span>`);
+                        meta.push(`<span><i class="fas fa-calendar-alt"></i> ${formatDate(app.created_at)}</span>`);
+                        if (app.downloads_count !== undefined && app.downloads_count !== null) {
+                            meta.push(`<span><i class="fas fa-download"></i> ${app.downloads_count}</span>`);
+                        }
+                        if (app.review_message) {
+                            meta.push(`<span><i class="fas fa-comment"></i> ${app.review_message}</span>`);
+                        }
+
+                        let actionsHtml = '';
+                        if (status === 'pending' || status === 'reviewing') {
+                            actionsHtml = `
+                                <button class="btn-sm green" data-action="published" data-id="${app.id}"><i class="fas fa-check"></i> Approuver</button>
+                                <button class="btn-sm red" data-action="rejected" data-id="${app.id}"><i class="fas fa-times"></i> Rejeter</button>
+                                <button class="btn-sm blue" data-action="reviewing" data-id="${app.id}"><i class="fas fa-search"></i> Réviser</button>
+                                <button class="btn-sm yellow" data-action="pending" data-id="${app.id}"><i class="fas fa-clock"></i> Attente</button>
+                                <button class="btn-sm gray" data-action="suspended" data-id="${app.id}"><i class="fas fa-ban"></i> Suspendre</button>
+                            `;
+                        } else if (status === 'published') {
+                            actionsHtml = `
+                                <button class="btn-sm blue" data-action="reviewing" data-id="${app.id}"><i class="fas fa-search"></i> Réviser</button>
+                                <button class="btn-sm gray" data-action="suspended" data-id="${app.id}"><i class="fas fa-ban"></i> Suspendre</button>
+                            `;
+                        } else if (status === 'suspended') {
+                            actionsHtml = `
+                                <button class="btn-sm green" data-action="published" data-id="${app.id}"><i class="fas fa-check"></i> Réactiver</button>
+                                <button class="btn-sm red" data-action="rejected" data-id="${app.id}"><i class="fas fa-times"></i> Supprimer</button>
+                            `;
+                        } else if (status === 'rejected') {
+                            actionsHtml = `
+                                <button class="btn-sm blue" data-action="reviewing" data-id="${app.id}"><i class="fas fa-redo"></i> Réexaminer</button>
+                            `;
+                        }
+
+                        const detailLink = `app-review.html?id=${app.id}`;
+
+                        html += `
+                            <div class="app-item" data-appid="${app.id}">
+                                <a href="${detailLink}" class="info">
+                                    <div class="icon">${logoHtml}</div>
+                                    <div class="details">
+                                        <div class="name">${app.title || app.package_name || 'Sans nom'}</div>
+                                        <div class="meta">${meta.join('')}</div>
+                                    </div>
+                                </a>
+                                <span class="status-badge ${badgeClass}">${badgeLabel}</span>
+                                <div class="actions">${actionsHtml}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    return html;
+                }
+
+                const sections = {
+                    dashboard: `
+                        <div class="section-header">
+                            <div><h2>📊 Tableau de bord</h2><div class="subtitle">Vue d'ensemble des applications</div></div>
+                            <div><button class="bg-primary-500/20 text-primary-400 px-4 py-2 rounded-full text-sm border border-primary-500/20 hover:bg-primary-500/30 transition" id="refreshBtn"><i class="fas fa-sync-alt mr-2"></i> Actualiser</button></div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-clock"></i></div><div class="stat-value">${statistics.pending + statistics.reviewing}</div><div class="stat-label">En attente / Révision</div></div>
+                            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-value">${statistics.published}</div><div class="stat-label">Publiées</div></div>
+                            <div class="stat-card"><div class="stat-icon red"><i class="fas fa-times-circle"></i></div><div class="stat-value">${statistics.rejected}</div><div class="stat-label">Rejetées</div></div>
+                            <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-ban"></i></div><div class="stat-value">${statistics.suspended}</div><div class="stat-label">Suspendues</div></div>
+                        </div>
+                        <div style="background:rgba(17,24,39,0.4); backdrop-filter:blur(8px); border-radius:24px; padding:1.5rem; border:1px solid rgba(255,255,255,0.06);">
+                            <h3 style="font-weight:600; color:#fff; margin-bottom:1rem;">📌 Dernières applications</h3>
+                            ${renderAppList(dashboard.pending.slice(0, 5).concat(dashboard.reviewing.slice(0, 5)).sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5), 'pending')}
+                        </div>
+                    `,
+                    pending: `
+                        <div class="section-header"><div><h2>⏳ En attente</h2><div class="subtitle">Applications en attente de traitement</div></div></div>
+                        ${renderAppList(dashboard.pending, 'pending')}
+                    `,
+                    reviewing: `
+                        <div class="section-header"><div><h2>🔍 En révision</h2><div class="subtitle">Applications en cours d'examen</div></div></div>
+                        ${renderAppList(dashboard.reviewing, 'reviewing')}
+                    `,
+                    published: `
+                        <div class="section-header"><div><h2>🟢 Publiées</h2><div class="subtitle">Applications disponibles sur la plateforme</div></div></div>
+                        ${renderAppList(dashboard.published, 'published')}
+                    `,
+                    rejected: `
+                        <div class="section-header"><div><h2>🔴 Rejetées</h2><div class="subtitle">Applications refusées par l'administration</div></div></div>
+                        ${renderAppList(dashboard.rejected, 'rejected')}
+                    `,
+                    suspended: `
+                        <div class="section-header"><div><h2>⚫ Suspendues</h2><div class="subtitle">Applications temporairement désactivées</div></div></div>
+                        ${renderAppList(dashboard.suspended, 'suspended')}
+                    `,
+                    stats: `
+                        <div class="section-header"><div><h2>📈 Statistiques</h2><div class="subtitle">Indicateurs clés de la plateforme</div></div></div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-users"></i></div><div class="stat-value">${statistics.total}</div><div class="stat-label">Total applications</div></div>
+                            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-value">${statistics.published}</div><div class="stat-label">Publiées</div></div>
+                            <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-clock"></i></div><div class="stat-value">${statistics.pending + statistics.reviewing}</div><div class="stat-label">En attente / Révision</div></div>
+                            <div class="stat-card"><div class="stat-icon red"><i class="fas fa-times-circle"></i></div><div class="stat-value">${statistics.rejected + statistics.suspended}</div><div class="stat-label">Rejetées / Suspendues</div></div>
+                        </div>
+                        <div style="background:rgba(17,24,39,0.4); backdrop-filter:blur(8px); border-radius:24px; padding:2rem; border:1px solid rgba(255,255,255,0.06); text-align:center; color:#9ca3af;">
+                            <i class="fas fa-chart-bar" style="font-size:3rem; color:#6b7280; margin-bottom:1rem; display:block;"></i>
+                            <p>Répartition des statuts</p>
+                            <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.5rem; flex-wrap:wrap;">
+                                <span style="background:rgba(251,146,60,0.2); color:#fb923c; padding:4px 16px; border-radius:40px; font-size:0.8rem;">En attente: ${statistics.pending}</span>
+                                <span style="background:rgba(59,130,246,0.2); color:#60a5fa; padding:4px 16px; border-radius:40px; font-size:0.8rem;">Révision: ${statistics.reviewing}</span>
+                                <span style="background:rgba(16,185,129,0.2); color:#34d399; padding:4px 16px; border-radius:40px; font-size:0.8rem;">Publiées: ${statistics.published}</span>
+                                <span style="background:rgba(239,68,68,0.2); color:#f87171; padding:4px 16px; border-radius:40px; font-size:0.8rem;">Rejetées: ${statistics.rejected}</span>
+                                <span style="background:rgba(107,114,128,0.2); color:#9ca3af; padding:4px 16px; border-radius:40px; font-size:0.8rem;">Suspendues: ${statistics.suspended}</span>
+                            </div>
+                        </div>
+                    `
+                };
+
+                container.innerHTML = `
+                    ${Object.entries(sections).map(([id, html]) => `<div id="section-${id}" class="section ${id === 'dashboard' ? 'active' : ''}">${html}</div>`).join('')}
+                `;
+
+                document.querySelectorAll('.app-item .actions .btn-sm').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const appId = this.dataset.id;
+                        const action = this.dataset.action;
+                        if (!appId || !action) return;
+
+                        let reviewMessage = null;
+                        if (action === 'rejected' || action === 'suspended') {
+                            const msg = prompt(`Raison du ${action === 'rejected' ? 'rejet' : 'suspension'} :`);
+                            if (msg === null) return;
+                            if (msg.trim() === '') { showToast('Veuillez fournir un message.', 'error'); return; }
+                            reviewMessage = msg;
+                        }
+                        if (action === 'rejected' || action === 'suspended') {
+                            if (!confirm(`Confirmer ${action === 'rejected' ? 'le rejet' : 'la suspension'} ?`)) return;
+                        }
+
+                        this.disabled = true;
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                        try {
+                            await updateStatus(appId, action, reviewMessage);
+                            showToast(`✅ Statut mis à jour : ${action}`, 'success');
+                            loadDashboard();
+                        } catch (err) {
+                            showToast('❌ ' + err.message, 'error');
+                            this.disabled = false;
+                            this.innerHTML = originalText;
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const sectionId = this.dataset.section;
+                        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                        const target = document.getElementById('section-' + sectionId);
+                        if (target) target.classList.add('active');
+                        document.querySelectorAll('.nav-item[data-section]').forEach(n => n.classList.remove('active'));
+                        this.classList.add('active');
+                        if (window.innerWidth <= 768) {
+                            document.getElementById('sidebar').classList.remove('open');
+                            document.getElementById('sidebarOverlay').classList.remove('show');
+                        }
+                    });
+                });
+
+                const refreshBtn = document.getElementById('refreshBtn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', function() {
+                        loadDashboard();
+                    });
+                }
+            }
+
+            async function loadDashboard() {
+                try {
+                    container.innerHTML = `<div class="loading-state"><i class="fas fa-spinner spinner"></i><p>Chargement du tableau de bord...</p></div>`;
+                    const data = await fetchDashboard();
+                    renderDashboard(data);
+                } catch (err) {
+                    container.innerHTML = `
+                        <div class="empty-state" style="color:#f87171;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erreur : ${err.message}</p>
+                            <button onclick="location.reload()" style="margin-top:1rem;padding:8px 24px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.3);border-radius:40px;color:#60a5fa;cursor:pointer;">Réessayer</button>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('mobileToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+                document.getElementById('sidebarOverlay').classList.toggle('show');
+            });
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('show');
+            });
+
+            loadDashboard();
+            setInterval(loadDashboard, 30000);
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,883 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Tableau de bord développeur</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        /* ===== FOND ANIMÉ ===== */
+        .dashboard-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.10), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .dashboard-bg .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.10;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .dashboard-bg .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .dashboard-bg .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .dashboard-bg .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .dashboard-bg .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .dashboard-bg .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.06; color: #3b82f6; }
+        .dashboard-bg .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .dashboard-bg .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .dashboard-bg .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .dashboard-bg .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .dashboard-bg .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.06; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        /* ===== HEADER FIXE ===== */
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header-fixed .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-fixed .left .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .header-fixed .left h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-fixed .left .badge-role {
+            font-size: 0.65rem;
+            background: rgba(59, 130, 246, 0.15);
+            padding: 2px 12px;
+            border-radius: 30px;
+            color: #60a5fa;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        .header-fixed .right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-fixed .right .notification {
+            position: relative;
+            font-size: 1.3rem;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .header-fixed .right .notification:hover { color: #fff; }
+        .header-fixed .right .notification .badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-fixed .right .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            transition: transform 0.2s;
+        }
+        .header-fixed .right .user-avatar:hover { transform: scale(1.05); }
+
+        .header-fixed .right .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+        .header-fixed .right .user-info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .header-fixed .right .user-info .email {
+            font-size: 0.7rem;
+            color: #9ca3af;
+        }
+
+        /* ===== CONTENEUR PRINCIPAL ===== */
+        .dashboard-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        /* ===== STATISTIQUES ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        .stat-card .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .stat-card .stat-icon.green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .stat-card .stat-icon.purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .stat-card .stat-icon.orange { background: rgba(251, 146, 60, 0.2); color: #fb923c; }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+        .stat-card .stat-change {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: #34d399;
+        }
+
+        /* ===== ACTIONS RAPIDES ===== */
+        .actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        .btn-action {
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-action.primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .btn-action.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-action.secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        .btn-action.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* ===== LISTE DES APPLICATIONS ===== */
+        .apps-section {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 1.8rem 1.8rem 2rem;
+            animation: fadeInUp 0.6s ease-out 0.7s both;
+        }
+
+        .apps-section .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .apps-section .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .apps-section .section-header .count {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 14px;
+            border-radius: 40px;
+        }
+
+        .app-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .app-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .app-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateX(4px);
+        }
+
+        .app-item .app-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .app-item .app-info .app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .app-item .app-info .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app-item .app-info .app-details .app-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .app-item .app-info:hover .app-details .app-name {
+            color: #60a5fa;
+        }
+
+        .app-item .app-info .app-details .app-meta {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .app-item .app-info .app-details .app-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .app-item .app-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .app-item .app-actions .btn-sm {
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sm.blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+        .btn-sm.blue:hover { background: rgba(59, 130, 246, 0.25); }
+
+        .btn-sm.green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+        .btn-sm.green:hover { background: rgba(16, 185, 129, 0.25); }
+
+        .btn-sm.red {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+        .btn-sm.red:hover { background: rgba(239, 68, 68, 0.25); }
+
+        .btn-sm.purple {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+        .btn-sm.purple:hover { background: rgba(139, 92, 246, 0.25); }
+
+        /* ===== ÉTAT CHARGEMENT / ERREUR ===== */
+        .loading-state, .error-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #9ca3af;
+        }
+        .loading-state i, .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .error-state i { color: #f87171; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding-top: 70px; }
+            .header-fixed { padding: 0.6rem 1rem; flex-wrap: wrap; }
+            .header-fixed .left h1 { font-size: 1.1rem; }
+            .header-fixed .left .badge-role { display: none; }
+            .header-fixed .right .user-info { display: none; }
+            .dashboard-wrapper { padding: 1rem; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .app-item { flex-direction: column; align-items: stretch; }
+            .app-item .app-actions { justify-content: flex-start; }
+            .actions-bar .btn-action { flex: 1; justify-content: center; }
+            .app-item .app-info { cursor: default; }
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .header-fixed .left h1 { font-size: 1rem; }
+            .header-fixed .right .notification { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FOND ANIMÉ ===== -->
+    <div class="dashboard-bg">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.06;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.05;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.07;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.06;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <!-- ===== HEADER FIXE ===== -->
+    <header class="header-fixed" id="mainHeader">
+        <div class="left">
+            <div class="logo-icon">A</div>
+            <h1>APPNET</h1>
+            <span class="badge-role">Développeur</span>
+        </div>
+        <div class="right">
+            <div class="notification">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="user-avatar" id="userAvatar">D</div>
+            <div class="user-info">
+                <span class="name" id="userName">Développeur</span>
+                <span class="email" id="userEmail">dev@email.com</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== CONTENU ===== -->
+    <div class="dashboard-wrapper">
+
+        <!-- ===== STATISTIQUES ===== -->
+        <section class="stats-grid" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-mobile-alt"></i></div>
+                <div class="stat-value" id="statApps">0</div>
+                <div class="stat-label">Applications</div>
+                <div class="stat-change"><i class="fas fa-arrow-up"></i> Chargement...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-download"></i></div>
+                <div class="stat-value" id="statDownloads">0</div>
+                <div class="stat-label">Téléchargements totaux</div>
+                <div class="stat-change"><i class="fas fa-arrow-up"></i> Chargement...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-star"></i></div>
+                <div class="stat-value" id="statRating">0.0</div>
+                <div class="stat-label">Note moyenne</div>
+                <div class="stat-change"><i class="fas fa-arrow-up"></i> Chargement...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-value" id="statLastUpdate">-</div>
+                <div class="stat-label">Dernière mise à jour</div>
+                <div class="stat-change"><i class="fas fa-clock"></i> Chargement...</div>
+            </div>
+        </section>
+
+        <!-- ===== ACTIONS RAPIDES ===== -->
+        <div class="actions-bar">
+            <a href="publieApp.html" class="btn-action primary">
+                <i class="fas fa-upload"></i> Publier une application
+            </a>
+            <a href="#" class="btn-action secondary" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i> Actualiser
+            </a>
+        </div>
+
+        <!-- ===== LISTE DES APPLICATIONS ===== -->
+        <section class="apps-section">
+            <div class="section-header">
+                <h2>Mes applications</h2>
+                <span class="count" id="appCount">0 applications</span>
+            </div>
+
+            <div id="appListContainer">
+                <!-- Les applications seront injectées ici dynamiquement -->
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Chargement de vos applications...</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ===== SCRIPT PRINCIPAL ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const token = localStorage.getItem('token');
+            const userData = JSON.parse(localStorage.getItem('user') || 'null');
+
+            // Éléments DOM
+            const appListContainer = document.getElementById('appListContainer');
+            const statApps = document.getElementById('statApps');
+            const statDownloads = document.getElementById('statDownloads');
+            const statRating = document.getElementById('statRating');
+            const statLastUpdate = document.getElementById('statLastUpdate');
+            const appCount = document.getElementById('appCount');
+
+            // Header user info
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+
+            // ===== REMPLIR LES INFOS UTILISATEUR AVEC LES DONNÉES RÉELLES =====
+            if (userData) {
+                const name = userData.company_name || userData.email || 'Développeur';
+                userAvatar.textContent = name.charAt(0).toUpperCase();
+                userName.textContent = name;
+                userEmail.textContent = userData.email || '';
+            } else if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const name = payload.company_name || payload.email || 'Développeur';
+                    userAvatar.textContent = name.charAt(0).toUpperCase();
+                    userName.textContent = name;
+                    userEmail.textContent = payload.email || '';
+                } catch (e) {
+                    console.warn('Impossible de décoder le token');
+                }
+            }
+
+            // Si pas de token, rediriger vers connexion
+            if (!token) {
+                window.location.href = '../connexion.html';
+                return;
+            }
+
+            // ===== Fonction pour obtenir le badge de statut =====
+            function getStatusBadge(status) {
+                const statusMap = {
+                    pending: {
+                        label: 'En attente',
+                        bg: 'rgba(251, 146, 60, 0.2)',
+                        color: '#fb923c',
+                        icon: 'fa-clock'
+                    },
+                    reviewing: {
+                        label: 'En révision',
+                        bg: 'rgba(59, 130, 246, 0.2)',
+                        color: '#60a5fa',
+                        icon: 'fa-search'
+                    },
+                    published: {
+                        label: 'Publiée',
+                        bg: 'rgba(16, 185, 129, 0.2)',
+                        color: '#34d399',
+                        icon: 'fa-check-circle'
+                    },
+                    rejected: {
+                        label: 'Rejetée',
+                        bg: 'rgba(239, 68, 68, 0.2)',
+                        color: '#f87171',
+                        icon: 'fa-times-circle'
+                    },
+                    suspended: {
+                        label: 'Suspendue',
+                        bg: 'rgba(107, 114, 128, 0.2)',
+                        color: '#9ca3af',
+                        icon: 'fa-ban'
+                    }
+                };
+
+                const info = statusMap[status] || statusMap.pending;
+                return `<span style="background:${info.bg};color:${info.color};padding:2px 10px;border-radius:20px;font-size:0.7rem;display:inline-flex;align-items:center;gap:4px;">
+                            <i class="fas ${info.icon}" style="font-size:0.6rem;"></i> ${info.label}
+                        </span>`;
+            }
+
+            async function fetchApps() {
+                try {
+                    const response = await fetch(`${API_BASE}/apps/my-apps`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('user');
+                            window.location.href = '../connexion.html';
+                            return;
+                        }
+                        throw new Error(`Erreur HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Erreur inconnue');
+                    }
+                    return data.apps || [];
+
+                } catch (error) {
+                    console.error('Erreur fetchApps:', error);
+                    throw error;
+                }
+            }
+
+            function renderApps(apps) {
+                const container = appListContainer;
+
+                if (!apps || apps.length === 0) {
+                    container.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Aucune application publiée pour le moment.</p>
+                            <p style="margin-top:0.5rem;font-size:0.9rem;">
+                                <a href="publieApp.html" style="color:#60a5fa;text-decoration:underline;">Publiez votre première application</a>
+                            </p>
+                        </div>
+                    `;
+                    appCount.textContent = '0 application';
+                    return;
+                }
+
+                let html = '<div class="app-list">';
+                apps.forEach(app => {
+                    const colors = ['#2563eb', '#7C3AED', '#E11D48', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+                    const colorIndex = (app.id || 0) % colors.length;
+                    const bgColor = colors[colorIndex];
+
+                    let iconHtml = `<i class="fas fa-mobile-alt"></i>`;
+                    if (app.category) {
+                        const cat = app.category.toLowerCase();
+                        if (cat.includes('jeu') || cat.includes('game')) iconHtml = `<i class="fas fa-gamepad"></i>`;
+                        else if (cat.includes('musique') || cat.includes('music')) iconHtml = `<i class="fas fa-music"></i>`;
+                        else if (cat.includes('social')) iconHtml = `<i class="fas fa-users"></i>`;
+                        else if (cat.includes('éducation') || cat.includes('education')) iconHtml = `<i class="fas fa-graduation-cap"></i>`;
+                        else if (cat.includes('santé') || cat.includes('health')) iconHtml = `<i class="fas fa-heartbeat"></i>`;
+                        else if (cat.includes('finance')) iconHtml = `<i class="fas fa-coins"></i>`;
+                        else if (cat.includes('voyage') || cat.includes('travel')) iconHtml = `<i class="fas fa-plane"></i>`;
+                        else if (cat.includes('sport')) iconHtml = `<i class="fas fa-dumbbell"></i>`;
+                        else if (cat.includes('shopping') || cat.includes('commerce')) iconHtml = `<i class="fas fa-shopping-cart"></i>`;
+                    }
+
+                    let logoHtml = '';
+                    if (app.logo_url) {
+                        logoHtml = `<img src="${app.logo_url}" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" />`;
+                    }
+
+                    const statusBadge = getStatusBadge(app.status);
+
+                    const createdDate = app.created_at ? new Date(app.created_at).toLocaleDateString('fr-FR') : 'N/A';
+                    const detailLink = `AppDetail.html?id=${app.id}`;
+                    const newVersionLink = `NewsVersion.html?appId=${app.id}`;
+                    const editLink = `Editer.html?appId=${app.id}`; // ✅ Nouveau lien vers la page d'édition
+
+                    html += `
+                        <div class="app-item">
+                            <a href="${detailLink}" class="app-info">
+                                <div class="app-icon" style="background:${bgColor};">
+                                    ${logoHtml || iconHtml}
+                                </div>
+                                <div class="app-details">
+                                    <div class="app-name">${app.title || app.package_name || 'Sans nom'} ${statusBadge}</div>
+                                    <div class="app-meta">
+                                        <span><i class="fas fa-tag"></i> ${app.category || 'Non catégorisé'}</span>
+                                        <span><i class="fas fa-code-branch"></i> ${app.package_name || 'N/A'}</span>
+                                        <span><i class="fas fa-calendar-alt"></i> ${createdDate}</span>
+                                        <span><i class="fas fa-download"></i> ${app.downloads_count || 0}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="app-actions">
+                                <a href="${detailLink}" class="btn-sm purple"><i class="fas fa-eye"></i> Détails</a>
+                                <a href="${editLink}" class="btn-sm blue"><i class="fas fa-edit"></i> Éditer</a> <!-- ✅ Lien corrigé -->
+                                <a href="${newVersionLink}" class="btn-sm green"><i class="fas fa-plus-circle"></i> Nouvelle version</a>
+                                <a href="#" class="btn-sm red"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+                appCount.textContent = `${apps.length} application${apps.length > 1 ? 's' : ''}`;
+                updateStats(apps);
+            }
+
+            function updateStats(apps) {
+                const totalApps = apps.length;
+                const totalDownloads = apps.reduce((sum, app) => sum + (app.downloads_count || 0), 0);
+
+                // Calcul d'une note moyenne (si non disponible, on laisse 0.0)
+                let avgRating = 0;
+                if (totalApps > 0) {
+                    // Si vous avez un champ average_rating dans votre API, utilisez-le.
+                    // Sinon, on simule une note en fonction des téléchargements (pour l'exemple)
+                    avgRating = parseFloat((3.5 + (totalDownloads % 15) / 10).toFixed(1));
+                    if (avgRating > 5) avgRating = 5;
+                }
+
+                let lastUpdate = '-';
+                if (totalApps > 0) {
+                    const sorted = [...apps].sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at));
+                    if (sorted[0] && sorted[0].updated_at) {
+                        lastUpdate = new Date(sorted[0].updated_at).toLocaleDateString('fr-FR');
+                    } else if (sorted[0] && sorted[0].created_at) {
+                        lastUpdate = new Date(sorted[0].created_at).toLocaleDateString('fr-FR');
+                    }
+                }
+
+                statApps.textContent = totalApps;
+                statDownloads.textContent = totalDownloads.toLocaleString();
+                statRating.textContent = avgRating.toFixed(1);
+                statLastUpdate.textContent = lastUpdate;
+
+                document.querySelectorAll('.stat-change').forEach(el => {
+                    el.innerHTML = `<i class="fas fa-arrow-up"></i> Mis à jour`;
+                });
+            }
+
+            async function initDashboard() {
+                try {
+                    appListContainer.innerHTML = `
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Chargement de vos applications...</p>
+                        </div>
+                    `;
+                    const apps = await fetchApps();
+                    renderApps(apps);
+                } catch (error) {
+                    appListContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Impossible de charger vos applications.</p>
+                            <p style="font-size:0.9rem;color:#9ca3af;margin-top:0.5rem;">${error.message}</p>
+                            <button onclick="location.reload()" style="margin-top:1rem;padding:8px 24px;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.3);border-radius:40px;color:#60a5fa;cursor:pointer;">Réessayer</button>
+                        </div>
+                    `;
+                    updateStats([]);
+                }
+            }
+
+            document.getElementById('refreshBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                initDashboard();
+            });
+
+            initDashboard();
+        })();
+    </script>
+</body>
+</html>
+

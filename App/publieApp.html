@@ -1,0 +1,1019 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Publier une application</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 1.5rem;
+        }
+
+        /* ===== FOND ANIMÉ ===== */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.10), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.10;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.06; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.06; color: #f87171; }
+        .bg-animated .float-icon:nth-child(11) { top: 12%; left: 70%; font-size: 4.5rem; opacity: 0.06; color: #8b5cf6; animation-duration: 20s; }
+        .bg-animated .float-icon:nth-child(12) { top: 65%; left: 25%; font-size: 5rem; opacity: 0.05; color: #f59e0b; animation-duration: 26s; }
+        .bg-animated .float-icon:nth-child(13) { top: 45%; left: 88%; font-size: 3.8rem; opacity: 0.07; color: #34d399; animation-duration: 22s; }
+        .bg-animated .float-icon:nth-child(14) { top: 78%; left: 55%; font-size: 4.2rem; opacity: 0.06; color: #f472b6; animation-duration: 24s; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        /* ===== CONTENEUR PRINCIPAL ===== */
+        .publish-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            width: 94vw;
+            max-width: 1440px;
+            height: 88vh;
+            max-height: 920px;
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(24px);
+            border-radius: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        /* ===== COLONNE GAUCHE ===== */
+        .left-panel {
+            padding: 2.8rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(10, 14, 26, 0.3);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .left-panel .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 2rem;
+        }
+
+        .left-panel .logo .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .left-panel .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .left-panel .subtitle {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+        .left-panel .subtitle span { color: #60a5fa; font-weight: 500; }
+
+        .left-panel .info-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .left-panel .info-card h3 {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .left-panel .info-card .step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s ease;
+        }
+        .left-panel .info-card .step:last-child { border-bottom: none; }
+
+        .left-panel .info-card .step .num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #60a5fa;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .left-panel .info-card .step .num.done {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+        .left-panel .info-card .step .num.active {
+            background: rgba(59, 130, 246, 0.35);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            color: #fff;
+        }
+
+        .left-panel .info-card .step .text {
+            color: #d1d5db;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .left-panel .info-card .step .text .sub {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: block;
+        }
+
+        .left-panel .security-badge {
+            margin-top: 2rem;
+            color: #6b7280;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .left-panel .security-badge i { color: #60a5fa; }
+
+        /* ===== COLONNE DROITE ===== */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            background: rgba(17, 24, 39, 0.2);
+            overflow: hidden;
+        }
+
+        /* ===== ZONE DE FORMULAIRE AVEC SCROLL ===== */
+        .right-panel .form-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2.5rem 2.2rem 1rem 2.2rem;
+        }
+
+        .right-panel .form-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .right-panel .form-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .right-panel .form-scroll::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+        }
+
+        .right-panel .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .right-panel .form-subtitle {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 5px;
+            letter-spacing: 0.3px;
+        }
+        .form-group label .required { color: #f87171; margin-left: 2px; }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.10);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #6b7280; }
+
+        .form-group select option { background: #1a1f36; color: #fff; }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* ===== FILE UPLOAD ===== */
+        .file-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .file-upload-area:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .file-upload-area .icon {
+            font-size: 2.5rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-area .label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .file-upload-area .filename {
+            font-size: 0.85rem;
+            color: #60a5fa;
+            margin-top: 0.3rem;
+            word-break: break-all;
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+
+        #screenshotsPreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        #screenshotsPreview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== BOUTONS (fixés en bas) ===== */
+        .right-panel .btn-footer {
+            padding: 1.2rem 2.2rem 1.8rem 2.2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(8px);
+            flex-shrink: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            min-width: 130px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-group .btn-prev {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 0.6;
+        }
+        .btn-group .btn-prev:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-group .btn-next {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            flex: 1.2;
+        }
+        .btn-group .btn-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-group .btn-submit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            flex: 1.2;
+        }
+        .btn-group .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-group .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group .btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-group .btn.loading .spinner { display: inline-block; }
+        .btn-group .btn.loading .btn-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .message.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .message.info {
+            display: block;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 0.8rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+        .back-link i { margin-right: 8px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .publish-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                max-height: 96vh;
+                width: 100%;
+                border-radius: 32px;
+                overflow-y: auto;
+            }
+            .left-panel { display: none; }
+            .right-panel .form-scroll { padding: 1.8rem 1.5rem; }
+            .right-panel .btn-footer { padding: 1rem 1.5rem 1.5rem; }
+            body { padding: 1rem; }
+            .btn-group .btn { min-width: 100px; }
+        }
+
+        @media (max-width: 640px) {
+            .right-panel .form-scroll { padding: 1.2rem 1rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .right-panel .form-title { font-size: 1.2rem; }
+            .btn-group { flex-direction: column; }
+            .btn-group .btn { width: 100%; }
+            .right-panel .btn-footer { padding: 0.8rem 1rem 1.2rem; }
+            .btn-group .btn-prev { flex: 1; }
+            .btn-group .btn-next { flex: 1; }
+            .btn-group .btn-submit { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FOND ANIMÉ ===== -->
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon"></i>
+        <i class="fas fa-database float-icon"></i>
+        <i class="fas fa-shield-alt float-icon"></i>
+        <i class="fas fa-chart-line float-icon"></i>
+    </div>
+
+    <!-- ===== CONTENEUR ===== -->
+    <div class="publish-container">
+
+        <!-- ===== PANEL GAUCHE ===== -->
+        <div class="left-panel">
+            <div class="logo">
+                <div class="icon">A</div>
+                <h1>APPNET</h1>
+            </div>
+            <p class="subtitle">
+                Publiez votre application en <span>3 étapes simples</span>.<br />
+                Remplissez les informations, ajoutez les médias, et déposez votre fichier.
+            </p>
+
+            <div class="info-card">
+                <h3>📋 Étapes de publication</h3>
+                <div class="step" id="step1">
+                    <div class="num active">1</div>
+                    <div class="text">
+                        Informations générales
+                        <span class="sub">Nom, catégorie, description</span>
+                    </div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="num">2</div>
+                    <div class="text">
+                        Logo & captures d'écran
+                        <span class="sub">Images de présentation</span>
+                    </div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="num">3</div>
+                    <div class="text">
+                        Téléchargement du fichier
+                        <span class="sub">APK / XAPK / AAB / APKS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i> Sécurisé · Vos données sont chiffrées
+            </div>
+        </div>
+
+        <!-- ===== PANEL DROIT ===== -->
+        <div class="right-panel">
+
+            <!-- ===== ZONE DE FORMULAIRE AVEC SCROLL ===== -->
+            <div class="form-scroll" id="formScroll">
+                <div class="form-title" id="formTitle">Informations générales</div>
+                <div class="form-subtitle" id="formSubtitle">Renseignez les détails de votre application.</div>
+
+                <form id="publishForm" autocomplete="off">
+
+                    <!-- Étape 1 -->
+                    <div id="step1Fields">
+                        <div class="form-group">
+                            <label>Nom du package <span class="required">*</span></label>
+                            <input type="text" name="package_name" placeholder="Ex: com.monentreprise.app" required />
+                            <small style="color:#6b7280;font-size:0.7rem;">Identifiant unique de votre application</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Titre de l'application <span class="required">*</span></label>
+                            <input type="text" name="title" placeholder="Ex: Mon App Super" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Catégorie <span class="required">*</span></label>
+                            <select name="category" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="jeux">Jeux</option>
+                                <option value="éducation">Éducation</option>
+                                <option value="musique">Musique</option>
+                                <option value="social">Social</option>
+                                <option value="santé">Santé</option>
+                                <option value="finance">Finance</option>
+                                <option value="voyage">Voyage</option>
+                                <option value="sport">Sport</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="divertissement">Divertissement</option>
+                                <option value="productivité">Productivité</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Description courte <span class="required">*</span></label>
+                            <input type="text" name="short_description" placeholder="Un résumé en une phrase" required maxlength="120" />
+                            <small style="color:#6b7280;font-size:0.7rem;">Maximum 120 caractères</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Description longue <span class="required">*</span></label>
+                            <textarea name="long_description" placeholder="Décrivez votre application en détail..." required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2 -->
+                    <div id="step2Fields" style="display:none;">
+                        <div class="form-group">
+                            <label>Logo de l'application</label>
+                            <div class="file-upload-area" id="logoUpload">
+                                <div class="icon"><i class="fas fa-image"></i></div>
+                                <div class="label">Cliquez ou glissez pour déposer votre logo</div>
+                                <div class="filename" id="logoFilename">Aucun fichier sélectionné</div>
+                                <input type="file" id="logoInput" accept="image/*" />
+                            </div>
+                            <small style="color:#6b7280;font-size:0.7rem;">Format recommandé : PNG ou JPG, 512x512px</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Captures d'écran (jusqu'à 10)</label>
+                            <div class="file-upload-area" id="screenshotsUpload">
+                                <div class="icon"><i class="fas fa-images"></i></div>
+                                <div class="label">Cliquez ou glissez pour déposer vos captures</div>
+                                <div class="filename" id="screenshotsFilename">Aucun fichier sélectionné</div>
+                                <input type="file" id="screenshotsInput" accept="image/*" multiple />
+                            </div>
+                            <small style="color:#6b7280;font-size:0.7rem;">Sélectionnez plusieurs fichiers (max 10)</small>
+                            <div id="screenshotsPreview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3 -->
+                    <div id="step3Fields" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom de la version <span class="required">*</span></label>
+                                <input type="text" name="version_name" placeholder="Ex: 1.0.0" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Code de version <span class="required">*</span></label>
+                                <input type="number" name="version_code" placeholder="Ex: 1" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fichier (APK / XAPK / AAB / APKS) <span class="required">*</span></label>
+                            <div class="file-upload-area" id="fileUpload">
+                                <div class="icon"><i class="fas fa-file-archive"></i></div>
+                                <div class="label">Cliquez ou glissez pour déposer votre fichier</div>
+                                <div class="filename" id="fileFilename">Aucun fichier sélectionné</div>
+                                <input type="file" id="fileInput" accept=".apk,.xapk,.aab,.apks" />
+                            </div>
+                            <small style="color:#6b7280;font-size:0.7rem;">Formats acceptés : APK, XAPK, AAB, APKS</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Journal des modifications</label>
+                            <textarea name="changelog" placeholder="Décrivez les nouveautés de cette version..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div id="message" class="message"></div>
+
+                    <a href="tableau-de-bord.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
+                </form>
+            </div>
+
+            <!-- ===== BOUTONS FIXÉS EN BAS ===== -->
+            <div class="btn-footer">
+                <div class="btn-group">
+                    <button type="button" id="prevBtn" class="btn btn-prev" style="display:none;">
+                        <i class="fas fa-arrow-left"></i> Précédent
+                    </button>
+                    <button type="button" id="nextBtn" class="btn btn-next">
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" id="submitBtn" class="btn btn-submit" style="display:none;">
+                        <span class="btn-text">Publier l'application</span>
+                        <span class="spinner"></span>
+                        <i class="fas fa-upload btn-text"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            // DOM
+            const form = document.getElementById('publishForm');
+            const step1Fields = document.getElementById('step1Fields');
+            const step2Fields = document.getElementById('step2Fields');
+            const step3Fields = document.getElementById('step3Fields');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            const formTitle = document.getElementById('formTitle');
+            const formSubtitle = document.getElementById('formSubtitle');
+
+            // Upload areas
+            const logoUpload = document.getElementById('logoUpload');
+            const logoInput = document.getElementById('logoInput');
+            const logoFilename = document.getElementById('logoFilename');
+
+            const screenshotsUpload = document.getElementById('screenshotsUpload');
+            const screenshotsInput = document.getElementById('screenshotsInput');
+            const screenshotsFilename = document.getElementById('screenshotsFilename');
+            const screenshotsPreview = document.getElementById('screenshotsPreview');
+
+            const fileUpload = document.getElementById('fileUpload');
+            const fileInput = document.getElementById('fileInput');
+            const fileFilename = document.getElementById('fileFilename');
+
+            // Steps DOM
+            const step1El = document.getElementById('step1');
+            const step2El = document.getElementById('step2');
+            const step3El = document.getElementById('step3');
+
+            let currentStep = 1;
+            let appId = null;
+
+            function showMessage(text, type = 'error') {
+                messageDiv.textContent = text;
+                messageDiv.className = `message ${type}`;
+                clearTimeout(window.messageTimeout);
+                window.messageTimeout = setTimeout(() => {
+                    messageDiv.className = 'message';
+                }, 8000);
+            }
+
+            function setLoading(btn, loading) {
+                if (loading) {
+                    btn.classList.add('loading');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
+            }
+
+            function updateStepUI(step) {
+                step1Fields.style.display = step === 1 ? 'block' : 'none';
+                step2Fields.style.display = step === 2 ? 'block' : 'none';
+                step3Fields.style.display = step === 3 ? 'block' : 'none';
+
+                prevBtn.style.display = step > 1 ? 'inline-flex' : 'none';
+                nextBtn.style.display = step < 3 ? 'inline-flex' : 'none';
+                submitBtn.style.display = step === 3 ? 'inline-flex' : 'none';
+
+                const titles = {
+                    1: 'Informations générales',
+                    2: 'Logo & captures d\'écran',
+                    3: 'Téléchargement du fichier'
+                };
+                const subtitles = {
+                    1: 'Renseignez les détails de votre application.',
+                    2: 'Ajoutez le logo et les captures d\'écran.',
+                    3: 'Déposez le fichier de votre application et validez.'
+                };
+                formTitle.textContent = titles[step];
+                formSubtitle.textContent = subtitles[step];
+
+                [step1El, step2El, step3El].forEach((el, idx) => {
+                    const num = idx + 1;
+                    const numEl = el.querySelector('.num');
+                    numEl.className = `num${num === step ? ' active' : ''}${num < step ? ' done' : ''}`;
+                });
+
+                // Scroll en haut du formulaire
+                document.getElementById('formScroll').scrollTop = 0;
+            }
+
+            // Upload handlers
+            function setupUpload(area, input, filenameEl, previewEl = null) {
+                area.addEventListener('click', () => input.click());
+                area.addEventListener('dragover', (e) => { e.preventDefault();
+                    area.style.borderColor = '#3b82f6'; });
+                area.addEventListener('dragleave', () => { area.style.borderColor = 'rgba(255,255,255,0.1)'; });
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.style.borderColor = 'rgba(255,255,255,0.1)';
+                    if (e.dataTransfer.files.length) {
+                        input.files = e.dataTransfer.files;
+                        input.dispatchEvent(new Event('change'));
+                    }
+                });
+
+                input.addEventListener('change', () => {
+                    if (input.files.length === 0) {
+                        filenameEl.textContent = 'Aucun fichier sélectionné';
+                        return;
+                    }
+                    if (input === logoInput || input === fileInput) {
+                        filenameEl.textContent = input.files[0].name;
+                    } else if (input === screenshotsInput) {
+                        const names = Array.from(input.files).map(f => f.name).join(', ');
+                        filenameEl.textContent = names || 'Aucun fichier sélectionné';
+                        if (previewEl) {
+                            previewEl.innerHTML = '';
+                            Array.from(input.files).forEach((file) => {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    previewEl.appendChild(img);
+                                };
+                                reader.readAsDataURL(file);
+                            });
+                        }
+                    }
+                });
+            }
+
+            setupUpload(logoUpload, logoInput, logoFilename);
+            setupUpload(screenshotsUpload, screenshotsInput, screenshotsFilename, screenshotsPreview);
+            setupUpload(fileUpload, fileInput, fileFilename);
+
+            // Navigation
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepUI(currentStep);
+                }
+            });
+
+            nextBtn.addEventListener('click', async () => {
+                if (currentStep === 1) {
+                    const fields = step1Fields.querySelectorAll('input[required], select[required], textarea[required]');
+                    let valid = true;
+                    fields.forEach(f => {
+                        if (!f.value.trim()) {
+                            f.style.borderColor = '#f87171';
+                            valid = false;
+                        } else {
+                            f.style.borderColor = '';
+                        }
+                    });
+                    if (!valid) {
+                        showMessage('Veuillez remplir tous les champs obligatoires.', 'error');
+                        return;
+                    }
+
+                    const payload = {
+                        package_name: document.querySelector('input[name="package_name"]').value.trim(),
+                        title: document.querySelector('input[name="title"]').value.trim(),
+                        short_description: document.querySelector('input[name="short_description"]').value.trim(),
+                        long_description: document.querySelector('textarea[name="long_description"]').value.trim(),
+                        category: document.querySelector('select[name="category"]').value
+                    };
+
+                    setLoading(nextBtn, true);
+                    try {
+                        const resp = await fetch(`${API_BASE}/apps`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(payload)
+                        });
+                        const data = await resp.json();
+                        if (resp.ok && data.success) {
+                            appId = data.app.id;
+                            showMessage('✅ Application créée avec succès !', 'success');
+                            currentStep = 2;
+                            updateStepUI(currentStep);
+                        } else {
+                            showMessage('❌ ' + (data.message || 'Erreur lors de la création'), 'error');
+                        }
+                    } catch (err) {
+                        showMessage('❌ Erreur réseau : ' + err.message, 'error');
+                    } finally {
+                        setLoading(nextBtn, false);
+                    }
+                } else if (currentStep === 2) {
+                    if (!appId) {
+                        showMessage('Veuillez d\'abord créer l\'application (étape 1).', 'error');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    if (logoInput.files.length > 0) formData.append('logo', logoInput.files[0]);
+                    if (screenshotsInput.files.length > 0) {
+                        for (const file of screenshotsInput.files) {
+                            formData.append('screenshots', file);
+                        }
+                    }
+
+                    if (!formData.has('logo') && !formData.has('screenshots')) {
+                        showMessage('Ajoutez au moins un logo ou une capture d\'écran (ou passez).', 'info');
+                        currentStep = 3;
+                        updateStepUI(currentStep);
+                        return;
+                    }
+
+                    setLoading(nextBtn, true);
+                    try {
+                        const resp = await fetch(`${API_BASE}/apps/${appId}/media`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` },
+                            body: formData
+                        });
+                        const data = await resp.json();
+                        if (resp.ok && data.success) {
+                            showMessage('✅ Médias uploadés avec succès !', 'success');
+                            currentStep = 3;
+                            updateStepUI(currentStep);
+                        } else {
+                            showMessage('❌ ' + (data.message || 'Erreur lors de l\'upload des médias'), 'error');
+                        }
+                    } catch (err) {
+                        showMessage('❌ Erreur réseau : ' + err.message, 'error');
+                    } finally {
+                        setLoading(nextBtn, false);
+                    }
+                }
+            });
+
+            // Soumission finale
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (currentStep !== 3) return;
+
+                const versionName = document.querySelector('input[name="version_name"]').value.trim();
+                const versionCode = document.querySelector('input[name="version_code"]').value.trim();
+                const file = fileInput.files[0];
+
+                if (!versionName || !versionCode || !file) {
+                    showMessage('Veuillez remplir tous les champs et sélectionner un fichier.', 'error');
+                    return;
+                }
+                if (!appId) {
+                    showMessage('Erreur : ID de l\'application manquant.', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('version_name', versionName);
+                formData.append('version_code', versionCode);
+                formData.append('changelog', document.querySelector('textarea[name="changelog"]').value.trim() || '');
+                formData.append('file', file);
+
+                setLoading(submitBtn, true);
+                try {
+                    const resp = await fetch(`${API_BASE}/apps/${appId}/version`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    const data = await resp.json();
+                    if (resp.ok && data.success) {
+                        showMessage('✅ Application publiée avec succès ! Redirection...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'tableau-de-bord.html';
+                        }, 2000);
+                    } else {
+                        showMessage('❌ ' + (data.message || 'Erreur lors de la publication'), 'error');
+                    }
+                } catch (err) {
+                    showMessage('❌ Erreur réseau : ' + err.message, 'error');
+                } finally {
+                    setLoading(submitBtn, false);
+                }
+            });
+
+            // Initialisation
+            updateStepUI(1);
+
+        })();
+    </script>
+</body>
+</html>
+

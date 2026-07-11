@@ -1,0 +1,849 @@
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APPNET · Détails de l'application</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa',
+                            500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a',
+                            950: '#172554' },
+                        dark: '#0a0e1a',
+                        'dark-card': '#111827',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        /* ===== FOND ANIMÉ ===== */
+        .bg-animated {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15), transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(29, 78, 216, 0.10), transparent 60%),
+                #0a0e1a;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animated .float-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.10;
+            color: #3b82f6;
+            animation: floatAround 25s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .bg-animated .float-icon:nth-child(1) { top: 5%; left: 3%; font-size: 4rem; animation-duration: 22s; color: #60a5fa; }
+        .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
+        .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
+        .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.06; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
+        .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
+        .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
+        .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.06; color: #f87171; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(80px, -60px) rotate(12deg) scale(1.1); }
+            50% { transform: translate(-50px, 80px) rotate(-8deg) scale(0.9); }
+            75% { transform: translate(100px, 40px) rotate(15deg) scale(1.05); }
+            100% { transform: translate(-60px, -40px) rotate(-10deg) scale(0.95); }
+        }
+
+        /* ===== CONTENEUR PRINCIPAL ===== */
+        .detail-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 0;
+        }
+
+        /* ===== EN-TÊTE ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .header-left h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-right .back-btn {
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ===== GRILLE PRINCIPALE ===== */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== COLONNE GAUCHE ===== */
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.05);
+        }
+
+        .app-header {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #1a1f36;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app-title h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .app-title .package {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+
+        .app-title .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 0.5rem;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.published {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .status-badge.pending {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .status-badge.reviewing {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .status-badge.suspended {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+        }
+
+        .app-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-item .label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .meta-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 2px;
+        }
+
+        .app-description {
+            margin-top: 1rem;
+        }
+
+        .app-description h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #d1d5db;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-description .short {
+            color: #9ca3af;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .app-description .long {
+            color: #d1d5db;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-top: 0.8rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ===== COLONNE DROITE ===== */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .screenshots-section, .versions-section {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .screenshots-section:hover, .versions-section:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #60a5fa;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .screenshot-item {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+            aspect-ratio: 9 / 16;
+            background: #1a1f36;
+        }
+
+        .screenshot-item:hover {
+            transform: scale(1.04);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .versions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.2s ease;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .version-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+
+        .version-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .version-info .vname {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .version-info .vcode {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+
+        .version-info .vformat {
+            font-size: 0.7rem;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 2px 10px;
+            border-radius: 40px;
+            text-transform: uppercase;
+        }
+
+        .version-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .version-meta .security {
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+
+        .security.scanning {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .security.safe {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .security.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .version-meta .size {
+            font-family: monospace;
+        }
+
+        .version-changelog {
+            font-size: 0.85rem;
+            color: #d1d5db;
+            width: 100%;
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ===== ÉTATS ===== */
+        .loading-state, .error-state, .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #9ca3af;
+        }
+
+        .loading-state i, .error-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .loading-state i { color: #60a5fa; }
+        .error-state i { color: #f87171; }
+
+        .loading-state .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .app-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .app-title .package {
+                text-align: center;
+                display: block;
+            }
+            .app-meta {
+                grid-template-columns: 1fr 1fr;
+            }
+            .screenshots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .app-card, .screenshots-section, .versions-section { padding: 1.2rem; }
+            .app-logo { width: 64px; height: 64px; }
+            .app-title h2 { font-size: 1.4rem; }
+            .app-meta { grid-template-columns: 1fr; }
+            .header-left h1 { font-size: 1.2rem; }
+            .header-right .back-btn { padding: 6px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FOND ANIMÉ ===== -->
+    <div class="bg-animated">
+        <i class="fas fa-store float-icon"></i>
+        <i class="fas fa-cloud float-icon"></i>
+        <i class="fas fa-gamepad float-icon"></i>
+        <i class="fas fa-music float-icon"></i>
+        <i class="fas fa-film float-icon"></i>
+        <i class="fas fa-robot float-icon"></i>
+        <i class="fas fa-shopping-bag float-icon"></i>
+        <i class="fas fa-headphones float-icon"></i>
+        <i class="fas fa-camera float-icon"></i>
+        <i class="fas fa-video float-icon"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.06;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.05;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.07;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.06;color:#f472b6;animation-duration:24s;"></i>
+    </div>
+
+    <!-- ===== CONTENEUR ===== -->
+    <div class="detail-container">
+
+        <!-- ===== EN-TÊTE ===== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-icon">A</div>
+                <h1>APPNET · Détails</h1>
+            </div>
+            <div class="header-right">
+                <a href="dashbord.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </header>
+
+        <!-- ===== CONTENU PRINCIPAL ===== -->
+        <div id="appContent">
+            <!-- Le contenu sera injecté ici -->
+            <div class="loading-state">
+                <i class="fas fa-spinner spinner"></i>
+                <p>Chargement des détails de l'application...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const API_BASE = 'http://localhost:5000/api';
+            const token = localStorage.getItem('token');
+
+            // Récupérer l'ID depuis l'URL (ex: ?id=1)
+            const params = new URLSearchParams(window.location.search);
+            const appId = params.get('id');
+
+            if (!token) {
+                window.location.href = '../connexion.html';
+                return;
+            }
+
+            if (!appId) {
+                document.getElementById('appContent').innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>ID de l'application manquant.</p>
+                        <a href="dashbord.html" style="color:#60a5fa;text-decoration:underline;margin-top:1rem;display:inline-block;">Retour au tableau de bord</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const container = document.getElementById('appContent');
+
+            // Fonction pour formater la taille en Mo/Go
+            function formatSize(bytes) {
+                if (!bytes) return '0 B';
+                const units = ['B', 'KB', 'MB', 'GB'];
+                let i = 0;
+                let size = bytes;
+                while (size >= 1024 && i < units.length - 1) {
+                    size /= 1024;
+                    i++;
+                }
+                return size.toFixed(1) + ' ' + units[i];
+            }
+
+            // Fonction pour formater la date
+            function formatDate(dateStr) {
+                if (!dateStr) return 'N/A';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            }
+
+            // Fonction pour obtenir le badge de statut
+            function getStatusBadge(status) {
+                const statusMap = {
+                    pending: {
+                        label: 'En attente',
+                        cls: 'pending',
+                        icon: 'fa-clock'
+                    },
+                    reviewing: {
+                        label: 'En révision',
+                        cls: 'reviewing',
+                        icon: 'fa-search'
+                    },
+                    published: {
+                        label: 'Publiée',
+                        cls: 'published',
+                        icon: 'fa-check-circle'
+                    },
+                    rejected: {
+                        label: 'Rejetée',
+                        cls: 'rejected',
+                        icon: 'fa-times-circle'
+                    },
+                    suspended: {
+                        label: 'Suspendue',
+                        cls: 'suspended',
+                        icon: 'fa-ban'
+                    }
+                };
+
+                const info = statusMap[status] || statusMap.pending;
+                return `<span class="status-badge ${info.cls}"><i class="fas ${info.icon}"></i> ${info.label}</span>`;
+            }
+
+            // Récupérer les données
+            async function fetchAppDetails() {
+                try {
+                    const response = await fetch(`${API_BASE}/apps/${appId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('user');
+                            window.location.href = '../connexion.html';
+                            return;
+                        }
+                        if (response.status === 404) {
+                            throw new Error('Application introuvable');
+                        }
+                        throw new Error(`Erreur HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message || 'Erreur inconnue');
+                    }
+
+                    return data.app;
+
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    throw error;
+                }
+            }
+
+            // Afficher les données
+            function renderApp(app) {
+                // Logo
+                const logoHtml = app.logo_url
+                    ? `<img src="${app.logo_url}" alt="${app.title}" />`
+                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#6b7280;"><i class="fas fa-mobile-alt"></i></div>`;
+
+                // Captures d'écran
+                let screenshotsHtml = '';
+                if (app.screenshots && app.screenshots.length > 0) {
+                    screenshotsHtml = app.screenshots.map(s => `
+                        <div class="screenshot-item">
+                            <img src="${s.image_url}" alt="Capture ${s.display_order}" />
+                        </div>
+                    `).join('');
+                } else {
+                    screenshotsHtml = `<p style="color:#6b7280;font-size:0.9rem;">Aucune capture d'écran</p>`;
+                }
+
+                // Versions
+                let versionsHtml = '';
+                if (app.versions && app.versions.length > 0) {
+                    versionsHtml = app.versions.map(v => {
+                        const securityClass = v.security_status === 'safe' ? 'safe' :
+                                             v.security_status === 'scanning' ? 'scanning' : 'danger';
+                        const securityLabel = v.security_status === 'safe' ? '✅ Sécurisé' :
+                                              v.security_status === 'scanning' ? '⏳ Scan en cours' : '⚠️ Dangereux';
+                        return `
+                            <div class="version-item">
+                                <div class="version-info">
+                                    <span class="vname">${v.version_name}</span>
+                                    <span class="vcode">(code ${v.version_code})</span>
+                                    <span class="vformat">${v.file_format}</span>
+                                </div>
+                                <div class="version-meta">
+                                    <span class="security ${securityClass}">${securityLabel}</span>
+                                    <span class="size">${formatSize(v.file_size_bytes)}</span>
+                                    <span style="font-size:0.7rem;color:#6b7280;">${formatDate(v.created_at)}</span>
+                                </div>
+                                ${v.changelog ? `<div class="version-changelog"><i class="fas fa-pen" style="color:#6b7280;margin-right:6px;"></i> ${v.changelog}</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    versionsHtml = `<p style="color:#6b7280;font-size:0.9rem;">Aucune version publiée</p>`;
+                }
+
+                const statusBadge = getStatusBadge(app.status);
+
+                container.innerHTML = `
+                    <div class="detail-grid">
+                        <!-- COLONNE GAUCHE -->
+                        <div class="left-col">
+                            <div class="app-card">
+                                <div class="app-header">
+                                    <div class="app-logo">${logoHtml}</div>
+                                    <div class="app-title">
+                                        <h2>${app.title}</h2>
+                                        <span class="package">${app.package_name}</span>
+                                        <br/>
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+
+                                <div class="app-meta">
+                                    <div class="meta-item">
+                                        <span class="label">Catégorie</span>
+                                        <span class="value">${app.category || 'Non catégorisé'}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Téléchargements</span>
+                                        <span class="value">${app.downloads_count || 0}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Créé le</span>
+                                        <span class="value">${formatDate(app.created_at)}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Dernière mise à jour</span>
+                                        <span class="value">${formatDate(app.updated_at)}</span>
+                                    </div>
+                                </div>
+
+                                <div class="app-description">
+                                    <h3>Description courte</h3>
+                                    <p class="short">${app.short_description || 'Aucune description courte'}</p>
+                                    <div class="long">
+                                        <strong style="color:#d1d5db;">Description longue</strong>
+                                        <p style="margin-top:6px;">${app.long_description || 'Aucune description longue'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COLONNE DROITE -->
+                        <div class="right-col">
+                            <!-- Captures d'écran -->
+                            <div class="screenshots-section">
+                                <div class="section-title">
+                                    <i class="fas fa-images"></i> Captures d'écran
+                                </div>
+                                <div class="screenshots-grid">
+                                    ${screenshotsHtml}
+                                </div>
+                            </div>
+
+                            <!-- Versions -->
+                            <div class="versions-section">
+                                <div class="section-title">
+                                    <i class="fas fa-code-branch"></i> Versions
+                                </div>
+                                <div class="versions-list">
+                                    ${versionsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Chargement initial
+            container.innerHTML = `
+                <div class="loading-state">
+                    <i class="fas fa-spinner spinner"></i>
+                    <p>Chargement des détails de l'application...</p>
+                </div>
+            `;
+
+            fetchAppDetails()
+                .then(app => {
+                    renderApp(app);
+                })
+                .catch(err => {
+                    container.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>${err.message || 'Impossible de charger les détails.'}</p>
+                            <a href="dashbord.html" style="color:#60a5fa;text-decoration:underline;margin-top:1rem;display:inline-block;">Retour au tableau de bord</a>
+                        </div>
+                    `;
+                });
+
+        })();
+    </script>
+</body>
+</html>
+
+
