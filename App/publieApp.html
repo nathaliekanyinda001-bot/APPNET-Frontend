@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -103,6 +104,102 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
             overflow: hidden;
+        }
+
+        /* ===== PROGRESS OVERLAY (FIXE SUR TOUT L'ÉCRAN) ===== */
+        .progress-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(10, 14, 26, 0.92);
+            backdrop-filter: blur(12px);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 2rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .progress-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .progress-overlay .spinner {
+            width: 64px;
+            height: 64px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-overlay .title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-overlay .title i {
+            color: #60a5fa;
+        }
+
+        .progress-overlay .subtitle {
+            color: #9ca3af;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .progress-overlay .progress-bar-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 60px;
+            height: 10px;
+            overflow: hidden;
+            margin-bottom: 0.8rem;
+        }
+
+        .progress-overlay .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6);
+            background-size: 200% 100%;
+            border-radius: 60px;
+            transition: width 0.2s ease;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .progress-overlay .progress-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.3rem;
+        }
+
+        .progress-overlay .progress-status {
+            color: #9ca3af;
+            font-size: 0.95rem;
         }
 
         /* ===== COLONNE GAUCHE ===== */
@@ -234,7 +331,6 @@
             overflow: hidden;
         }
 
-        /* ===== ZONE DE FORMULAIRE AVEC SCROLL ===== */
         .right-panel .form-scroll {
             flex: 1;
             overflow-y: auto;
@@ -369,7 +465,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== BOUTONS (fixés en bas) ===== */
+        /* ===== BOUTONS ===== */
         .right-panel .btn-footer {
             padding: 1.2rem 2.2rem 1.8rem 2.2rem;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -521,6 +617,7 @@
             .btn-group .btn-prev { flex: 1; }
             .btn-group .btn-next { flex: 1; }
             .btn-group .btn-submit { flex: 1; }
+            .progress-overlay .title { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -544,8 +641,22 @@
         <i class="fas fa-chart-line float-icon"></i>
     </div>
 
+    <!-- ===== PROGRESS OVERLAY (FIXE) ===== -->
+    <div class="progress-overlay" id="progressOverlay">
+        <div class="spinner"></div>
+        <div class="title">
+            <i class="fas fa-cloud-upload-alt"></i> Publication en cours
+        </div>
+        <div class="subtitle">Téléchargement du fichier, veuillez patienter...</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0%</div>
+        <div class="progress-status" id="progressStatus">Préparation...</div>
+    </div>
+
     <!-- ===== CONTENEUR ===== -->
-    <div class="publish-container">
+    <div class="publish-container" id="publishContainer">
 
         <!-- ===== PANEL GAUCHE ===== -->
         <div class="left-panel">
@@ -591,7 +702,7 @@
         <!-- ===== PANEL DROIT ===== -->
         <div class="right-panel">
 
-            <!-- ===== ZONE DE FORMULAIRE AVEC SCROLL ===== -->
+            <!-- ===== ZONE DE FORMULAIRE ===== -->
             <div class="form-scroll" id="formScroll">
                 <div class="form-title" id="formTitle">Informations générales</div>
                 <div class="form-subtitle" id="formSubtitle">Renseignez les détails de votre application.</div>
@@ -695,7 +806,7 @@
                     <!-- Message -->
                     <div id="message" class="message"></div>
 
-                    <a href="tableau-de-bord.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
+                    <a href="dashbord.html" class="back-link"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
                 </form>
             </div>
 
@@ -708,7 +819,7 @@
                     <button type="button" id="nextBtn" class="btn btn-next">
                         Suivant <i class="fas fa-arrow-right"></i>
                     </button>
-                    <button type="submit" id="submitBtn" class="btn btn-submit" style="display:none;">
+                    <button type="button" id="submitBtn" class="btn btn-submit" style="display:none;">
                         <span class="btn-text">Publier l'application</span>
                         <span class="spinner"></span>
                         <i class="fas fa-upload btn-text"></i>
@@ -723,7 +834,7 @@
         (function() {
             'use strict';
 
-            const API_BASE = 'http://localhost:5000/api';
+            const API_BASE = 'https://appnet-backend.onrender.com/api';
             const token = localStorage.getItem('token');
 
             if (!token) {
@@ -742,6 +853,12 @@
             const messageDiv = document.getElementById('message');
             const formTitle = document.getElementById('formTitle');
             const formSubtitle = document.getElementById('formSubtitle');
+
+            // Progress overlay
+            const overlay = document.getElementById('progressOverlay');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressStatus = document.getElementById('progressStatus');
 
             // Upload areas
             const logoUpload = document.getElementById('logoUpload');
@@ -765,6 +882,7 @@
             let currentStep = 1;
             let appId = null;
 
+            // ===== Fonctions =====
             function showMessage(text, type = 'error') {
                 messageDiv.textContent = text;
                 messageDiv.className = `message ${type}`;
@@ -782,6 +900,23 @@
                     btn.classList.remove('loading');
                     btn.disabled = false;
                 }
+            }
+
+            function updateProgress(percent, status) {
+                progressFill.style.width = percent + '%';
+                progressText.textContent = percent + '%';
+                if (status) progressStatus.textContent = status;
+            }
+
+            function resetProgress() {
+                progressFill.style.width = '0%';
+                progressText.textContent = '0%';
+                progressStatus.textContent = 'Préparation...';
+                overlay.classList.remove('active');
+            }
+
+            function showOverlay() {
+                overlay.classList.add('active');
             }
 
             function updateStepUI(step) {
@@ -812,11 +947,10 @@
                     numEl.className = `num${num === step ? ' active' : ''}${num < step ? ' done' : ''}`;
                 });
 
-                // Scroll en haut du formulaire
                 document.getElementById('formScroll').scrollTop = 0;
             }
 
-            // Upload handlers
+            // ===== Upload handlers =====
             function setupUpload(area, input, filenameEl, previewEl = null) {
                 area.addEventListener('click', () => input.click());
                 area.addEventListener('dragover', (e) => { e.preventDefault();
@@ -861,7 +995,7 @@
             setupUpload(screenshotsUpload, screenshotsInput, screenshotsFilename, screenshotsPreview);
             setupUpload(fileUpload, fileInput, fileFilename);
 
-            // Navigation
+            // ===== Navigation =====
             prevBtn.addEventListener('click', () => {
                 if (currentStep > 1) {
                     currentStep--;
@@ -962,9 +1096,11 @@
                 }
             });
 
-            // Soumission finale
-            form.addEventListener('submit', async (e) => {
+            // ===== PUBLIER : clic sur le bouton (et non submit du formulaire) =====
+            submitBtn.addEventListener('click', async function(e) {
                 e.preventDefault();
+
+                // Vérifier qu'on est à l'étape 3
                 if (currentStep !== 3) return;
 
                 const versionName = document.querySelector('input[name="version_name"]').value.trim();
@@ -980,40 +1116,88 @@
                     return;
                 }
 
+                // Afficher l'overlay de progression FIXE
+                showOverlay();
+                updateProgress(0, 'Démarrage de l\'upload...');
+
+                // Désactiver le bouton
+                this.disabled = true;
+
                 const formData = new FormData();
                 formData.append('version_name', versionName);
                 formData.append('version_code', versionCode);
                 formData.append('changelog', document.querySelector('textarea[name="changelog"]').value.trim() || '');
                 formData.append('file', file);
 
-                setLoading(submitBtn, true);
+                // Utiliser XMLHttpRequest pour suivre la progression
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (event) => {
+                    if (event.lengthComputable) {
+                        const percent = Math.round((event.loaded / event.total) * 100);
+                        updateProgress(percent, `Téléchargement en cours... ${percent}%`);
+                    }
+                });
+
+                const promise = new Promise((resolve, reject) => {
+                    xhr.onload = function() {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            resolve({
+                                ok: xhr.status >= 200 && xhr.status < 300,
+                                status: xhr.status,
+                                data: response
+                            });
+                        } catch (e) {
+                            reject(new Error('Erreur de parsing JSON'));
+                        }
+                    };
+                    xhr.onerror = function() {
+                        reject(new Error('Erreur réseau'));
+                    };
+                    xhr.onabort = function() {
+                        reject(new Error('Upload annulé'));
+                    };
+                });
+
+                xhr.open('POST', `${API_BASE}/apps/${appId}/version`);
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                // Ne pas définir Content-Type
+
+                updateProgress(0, 'Préparation de l\'upload...');
+                xhr.send(formData);
+
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/version`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
-                    });
-                    const data = await resp.json();
-                    if (resp.ok && data.success) {
+                    const result = await promise;
+
+                    if (result.ok && result.data.success) {
+                        updateProgress(100, '✅ Publication terminée !');
                         showMessage('✅ Application publiée avec succès ! Redirection...', 'success');
+                        // Redirection vers dashbord.html
                         setTimeout(() => {
-                            window.location.href = 'tableau-de-bord.html';
+                            window.location.href = 'dashbord.html';
                         }, 2000);
                     } else {
-                        showMessage('❌ ' + (data.message || 'Erreur lors de la publication'), 'error');
+                        const msg = result.data.message || 'Erreur lors de la publication.';
+                        updateProgress(0, '❌ Erreur');
+                        showMessage('❌ ' + msg, 'error');
+                        setTimeout(resetProgress, 3000);
                     }
                 } catch (err) {
-                    showMessage('❌ Erreur réseau : ' + err.message, 'error');
+                    updateProgress(0, '❌ ' + err.message);
+                    showMessage('❌ ' + err.message, 'error');
+                    setTimeout(resetProgress, 3000);
                 } finally {
-                    setLoading(submitBtn, false);
+                    this.disabled = false;
                 }
             });
 
-            // Initialisation
+            // ===== Initialisation =====
             updateStepUI(1);
 
         })();
     </script>
 </body>
 </html>
+
 
