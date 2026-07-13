@@ -1,7 +1,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -40,7 +39,7 @@
             background: #0a0e1a;
             color: #fff;
             min-height: 100vh;
-            padding-top: 80px;
+            padding-top: 70px;
             overflow-x: hidden;
         }
 
@@ -58,7 +57,7 @@
         .bg-animated .float-icon {
             position: absolute;
             font-size: 3rem;
-            opacity: 0.06;
+            opacity: 0.04;
             color: #3b82f6;
             animation: floatAround 25s infinite alternate ease-in-out;
         }
@@ -66,12 +65,12 @@
         .bg-animated .float-icon:nth-child(2) { top: 80%; left: 90%; font-size: 5rem; animation-duration: 18s; animation-delay: 1s; color: #93c5fd; }
         .bg-animated .float-icon:nth-child(3) { top: 15%; left: 80%; font-size: 3.5rem; animation-duration: 25s; animation-delay: 0.5s; color: #2563eb; }
         .bg-animated .float-icon:nth-child(4) { top: 85%; left: 5%; font-size: 4.2rem; animation-duration: 20s; animation-delay: 2s; color: #1d4ed8; }
-        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.04; color: #3b82f6; }
+        .bg-animated .float-icon:nth-child(5) { top: 40%; left: 50%; font-size: 6rem; animation-duration: 28s; animation-delay: 0.8s; opacity: 0.03; color: #3b82f6; }
         .bg-animated .float-icon:nth-child(6) { top: 2%; left: 40%; font-size: 3rem; animation-duration: 24s; animation-delay: 1.5s; color: #8b5cf6; }
         .bg-animated .float-icon:nth-child(7) { top: 92%; left: 30%; font-size: 4.5rem; animation-duration: 19s; animation-delay: 0.3s; color: #f472b6; }
         .bg-animated .float-icon:nth-child(8) { top: 20%; left: 15%; font-size: 3.8rem; animation-duration: 21s; animation-delay: 2.5s; color: #fbbf24; }
         .bg-animated .float-icon:nth-child(9) { top: 60%; left: 70%; font-size: 4.8rem; animation-duration: 23s; animation-delay: 0.1s; color: #34d399; }
-        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.04; color: #f87171; }
+        .bg-animated .float-icon:nth-child(10) { top: 50%; left: 5%; font-size: 5rem; animation-duration: 27s; animation-delay: 1.8s; opacity: 0.03; color: #f87171; }
 
         @keyframes floatAround {
             0% { transform: translate(0, 0) rotate(0deg) scale(1); }
@@ -87,41 +86,43 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: rgba(10, 14, 26, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 0.8rem 2rem;
+            background: rgba(10, 14, 26, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.7rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
         }
+
         .header .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .header .logo .icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #fff;
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
         }
         .header .logo h1 {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 700;
             background: linear-gradient(135deg, #fff, #93c5fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.3px;
         }
+
         .header .back-btn {
             color: #9ca3af;
             text-decoration: none;
@@ -130,6 +131,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 0.9rem;
         }
         .header .back-btn:hover {
             color: #fff;
@@ -138,95 +140,60 @@
         .container {
             position: relative;
             z-index: 1;
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem 1.2rem 3rem;
         }
 
-        .loading-state {
+        .loading-state, .error-state {
             text-align: center;
             padding: 4rem 1rem;
             color: #9ca3af;
         }
-        .loading-state i {
-            font-size: 3.5rem;
+        .loading-state i, .error-state i {
+            font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
-            color: #60a5fa;
         }
-        .loading-state .spinner {
-            animation: spin 1s linear infinite;
-        }
+        .loading-state i { color: #60a5fa; }
+        .error-state i { color: #f87171; }
+        .loading-state .spinner { animation: spin 1s linear infinite; }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .error-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: #f87171;
-        }
-        .error-state i {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .app-detail {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-            animation: fadeUp 0.6s ease-out;
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .app-detail .left {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        .app-detail .right {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
         .app-card {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 28px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-        .app-card:hover {
-            border-color: rgba(59, 130, 246, 0.15);
+            background: rgba(17, 24, 39, 0.55);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s;
         }
 
         .app-header {
             display: flex;
-            gap: 1.5rem;
-            align-items: flex-start;
+            gap: 1rem;
+            align-items: center;
         }
-        .app-header .logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+
+        .app-header .icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
             overflow: hidden;
             flex-shrink: 0;
             background: #1a1f36;
-            border: 2px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
-        .app-header .logo img {
+        .app-header .icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .app-header .logo .placeholder {
+        .app-header .icon .placeholder {
             width: 100%;
             height: 100%;
             display: flex;
@@ -235,156 +202,64 @@
             font-size: 2rem;
             color: #6b7280;
         }
-        .app-header .info h1 {
-            font-size: 1.8rem;
+
+        .app-header .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .app-header .info .name {
+            font-size: 1.4rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 0.3rem;
+            line-height: 1.2;
+            margin-bottom: 0.15rem;
         }
-        .app-header .info .package {
+        .app-header .info .developer {
             font-size: 0.9rem;
             color: #9ca3af;
-            font-family: monospace;
         }
         .app-header .info .category {
             display: inline-block;
-            margin-top: 0.5rem;
-            padding: 0.2rem 1rem;
-            background: rgba(59, 130, 246, 0.15);
+            margin-top: 0.3rem;
+            padding: 0.15rem 0.8rem;
+            background: rgba(59, 130, 246, 0.12);
             color: #60a5fa;
             border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .app-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .meta-item .label {
             font-size: 0.7rem;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             font-weight: 600;
         }
-        .meta-item .value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 2px;
-        }
 
-        .description .short {
-            color: #9ca3af;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-        .description .long {
-            color: #d1d5db;
-            font-size: 0.95rem;
-            line-height: 1.8;
-            margin-top: 0.8rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .screenshots-grid {
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-        .screenshot-item {
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            aspect-ratio: 9 / 16;
-            background: #1a1f36;
-            transition: all 0.3s ease;
-        }
-        .screenshot-item:hover {
-            transform: scale(1.04);
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
-        }
-        .screenshot-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .versions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .version-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            flex-wrap: wrap;
+            grid-template-columns: repeat(4, 1fr);
             gap: 0.5rem;
-        }
-        .version-item .vname {
-            font-weight: 600;
-            color: #fff;
-        }
-        .version-item .vcode {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            font-family: monospace;
-        }
-        .version-item .vformat {
-            font-size: 0.7rem;
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            padding: 2px 10px;
-            border-radius: 40px;
-            text-transform: uppercase;
-        }
-        .version-item .vmeta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-        .version-item .vmeta .size {
-            font-family: monospace;
-        }
-
-        .developer-info .dev-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
+            margin: 1.2rem 0 0.8rem;
+            padding: 0.8rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
-        .developer-info .dev-item:last-child {
-            border-bottom: none;
+        .stats-row .stat-item {
+            text-align: center;
         }
-        .developer-info .dev-item .label {
-            color: #6b7280;
-            font-size: 0.85rem;
+        .stats-row .stat-item .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
         }
-        .developer-info .dev-item .value {
-            color: #d1d5db;
-            font-size: 0.9rem;
-            font-weight: 500;
+        .stats-row .stat-item .stat-label {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
+        .download-section {
+            margin: 1rem 0 1.2rem;
+        }
         .download-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, #10b981, #059669);
             border: none;
             border-radius: 60px;
@@ -393,16 +268,15 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 1rem;
         }
         .download-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 35px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.35);
         }
         .download-btn:disabled {
             opacity: 0.6;
@@ -418,16 +292,277 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        .download-btn.loading .spinner {
-            display: inline-block;
+        .download-btn.loading .spinner { display: inline-block; }
+        .download-btn.loading .btn-text { display: none; }
+
+        .download-size {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.3rem;
         }
-        .download-btn.loading .btn-text {
+
+        /* ===== AVIS ===== */
+        .reviews-section {
+            margin: 1.5rem 0;
+        }
+        .reviews-section .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+        .review-item {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .review-item .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1a1f36;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #9ca3af;
+            overflow: hidden;
+        }
+        .review-item .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .review-item .review-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .review-item .review-content .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .review-item .review-content .review-header .name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+        .review-item .review-content .review-header .stars {
+            color: #fbbf24;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        .review-item .review-content .review-header .stars .empty {
+            color: #4b5563;
+        }
+        .review-item .review-content .review-text {
+            color: #d1d5db;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 0.2rem;
+        }
+        .review-item .review-content .review-date {
+            font-size: 0.7rem;
+            color: #6b7280;
+            margin-top: 0.2rem;
+        }
+
+        .reviews-section .show-more-reviews {
+            color: #60a5fa;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.3rem 0;
+        }
+        .reviews-section .show-more-reviews:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== À PROPOS ===== */
+        .about-section {
+            margin: 1.2rem 0;
+        }
+        .about-section .about-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+        .about-section .about-text {
+            color: #d1d5db;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .about-section .about-text.collapsed {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .about-section .show-more {
+            color: #60a5fa;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.3rem;
+        }
+        .about-section .show-more:hover {
+            text-decoration: underline;
+        }
+
+        .about-section .dev-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             display: none;
+        }
+        .about-section .dev-info.visible {
+            display: block;
+        }
+        .about-section .dev-info .dev-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+        .about-section .dev-info .dev-item .label {
+            color: #6b7280;
+        }
+        .about-section .dev-info .dev-item .value {
+            color: #d1d5db;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* ===== CAPTURES D'ÉCRAN ===== */
+        .screenshots-section {
+            margin: 1.5rem 0;
+        }
+        .screenshots-section .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+        .screenshots-scroll {
+            display: flex;
+            gap: 0.8rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+        }
+        .screenshots-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+        .screenshots-scroll::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+        }
+        .screenshots-scroll .screenshot-item {
+            flex: 0 0 auto;
+            width: 100px;
+            aspect-ratio: 9 / 16;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: #1a1f36;
+            transition: transform 0.2s;
+        }
+        .screenshots-scroll .screenshot-item:hover {
+            transform: scale(1.04);
+        }
+        .screenshots-scroll .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== APPLICATIONS SIMILAIRES ===== */
+        .similar-section {
+            margin-top: 2rem;
+        }
+        .similar-section .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .similar-item {
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 0.7rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .similar-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.2);
+            background: rgba(17, 24, 39, 0.6);
+        }
+        .similar-item .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1a1f36;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+            margin-bottom: 0.4rem;
+        }
+        .similar-item .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .similar-item .logo .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+        }
+        .similar-item .name {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #fff;
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .similar-item .category {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            margin-top: 0.1rem;
         }
 
         .toast {
             position: fixed;
-            top: 90px;
+            top: 80px;
             right: 20px;
             padding: 12px 24px;
             border-radius: 16px;
@@ -450,18 +585,26 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        @media (max-width: 1024px) {
-            .app-detail { grid-template-columns: 1fr; }
-            .app-header { flex-direction: column; align-items: center; text-align: center; }
-            .app-meta { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 640px) {
-            .header { padding: 0.6rem 1rem; }
+        @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            .header { padding: 0.5rem 1rem; }
+            .header .logo h1 { font-size: 1rem; }
+            .header .back-btn { font-size: 0.8rem; }
             .container { padding: 1rem; }
-            .app-card { padding: 1.2rem; }
-            .app-meta { grid-template-columns: 1fr; }
-            .app-header .logo { width: 64px; height: 64px; }
-            .app-header .info h1 { font-size: 1.4rem; }
+            .app-header .icon { width: 60px; height: 60px; border-radius: 14px; }
+            .app-header .info .name { font-size: 1.2rem; }
+            .stats-row { grid-template-columns: repeat(4, 1fr); gap: 0.3rem; }
+            .stats-row .stat-item .stat-value { font-size: 0.9rem; }
+            .screenshots-scroll .screenshot-item { width: 80px; }
+            .similar-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+            .stats-row .stat-item { text-align: left; }
+            .app-header .icon { width: 52px; height: 52px; }
+            .screenshots-scroll .screenshot-item { width: 70px; }
+            .similar-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -478,10 +621,10 @@
         <i class="fas fa-headphones float-icon"></i>
         <i class="fas fa-camera float-icon"></i>
         <i class="fas fa-video float-icon"></i>
-        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.04;color:#8b5cf6;animation-duration:20s;"></i>
-        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.03;color:#f59e0b;animation-duration:26s;"></i>
-        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.04;color:#34d399;animation-duration:22s;"></i>
-        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.03;color:#f472b6;animation-duration:24s;"></i>
+        <i class="fas fa-code float-icon" style="top:12%;left:70%;font-size:4.5rem;opacity:0.03;color:#8b5cf6;animation-duration:20s;"></i>
+        <i class="fas fa-database float-icon" style="top:65%;left:25%;font-size:5rem;opacity:0.025;color:#f59e0b;animation-duration:26s;"></i>
+        <i class="fas fa-shield-alt float-icon" style="top:45%;left:88%;font-size:3.8rem;opacity:0.035;color:#34d399;animation-duration:22s;"></i>
+        <i class="fas fa-chart-line float-icon" style="top:78%;left:55%;font-size:4.2rem;opacity:0.025;color:#f472b6;animation-duration:24s;"></i>
     </div>
 
     <!-- ===== HEADER ===== -->
@@ -490,7 +633,7 @@
             <div class="icon">A</div>
             <h1>APPNET</h1>
         </div>
-        <a href="store.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour au store</a>
+        <a href="store.html" class="back-btn"><i class="fas fa-arrow-left"></i> Store</a>
     </header>
 
     <!-- ===== CONTENU ===== -->
@@ -522,7 +665,6 @@
                 }, 5000);
             }
 
-            // Récupérer l'ID depuis l'URL
             const params = new URLSearchParams(window.location.search);
             const appId = params.get('id');
 
@@ -539,8 +681,10 @@
 
             let appData = null;
             let latestVersionId = null;
+            let appSize = null;
+            let allApps = [];
 
-            // Formatter la taille
+            // ===== FORMATAGE =====
             function formatSize(bytes) {
                 if (!bytes) return 'N/A';
                 const units = ['B', 'KB', 'MB', 'GB'];
@@ -553,32 +697,106 @@
                 return size.toFixed(1) + ' ' + units[i];
             }
 
-            // Formater la date
-            function formatDate(dateStr) {
-                if (!dateStr) return 'N/A';
-                const d = new Date(dateStr);
-                return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            function formatDownloads(count) {
+                if (count === undefined || count === null) return '0';
+                const num = Number(count);
+                if (isNaN(num)) return '0';
+                if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' Md';
+                if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
+                if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + ' k';
+                return num.toString();
             }
 
-            // Récupérer les détails de l'application
-            async function fetchAppDetails() {
-                try {
-                    const resp = await fetch(`${API_BASE}/public/apps/${appId}`);
-                    if (!resp.ok) {
-                        const err = await resp.json().catch(() => ({}));
-                        if (resp.status === 404) throw new Error('Application introuvable');
-                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
-                    }
-                    const data = await resp.json();
-                    if (!data.success) throw new Error(data.message || 'Erreur inconnue');
-                    return data.app;
-                } catch (err) {
-                    console.error('Erreur fetchAppDetails:', err);
-                    throw err;
+            function formatDownloadsText(count) {
+                const num = Number(count) || 0;
+                if (num >= 1_000_000_000) return `Plus de ${(num / 1_000_000_000).toFixed(1).replace(/\.0$/, '')} Md`;
+                if (num >= 1_000_000) return `Plus de ${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')} M`;
+                if (num >= 1000) return `Plus de ${(num / 1000).toFixed(1).replace(/\.0$/, '')} k`;
+                return `Plus de ${num}`;
+            }
+
+            // Nombre d'avis aléatoire entre 1 et 100
+            function randomReviews() {
+                return Math.floor(Math.random() * 100) + 1;
+            }
+
+            // ===== AVIS MOCK =====
+            // Noms congolais (masculins / féminins)
+            const names = [
+                'Kabongo Ntumba', 'Mbuyi Mwamba', 'Tshibanda Kabila', 'Kanyinda Kabasele',
+                'Mwamba Tshimanga', 'Nkosi Kambale', 'Mutombo Mbiya', 'Kasongo Ngoie',
+                'Tshimanga Mukendi', 'Kabamba Mputu', 'Ngalula Mwamba', 'Kankonde Mukuna',
+                'Kitoko Nzuzi', 'Lubumbashi Kabila', 'Mbaki Tshibola'
+            ];
+
+            // Messages d'avis (mix positif / négatif)
+            const messages = [
+                { text: "Application incroyable ! Très utile au quotidien.", positive: true },
+                { text: "J'adore cette app, elle répond parfaitement à mes besoins.", positive: true },
+                { text: "Très bonne application, je la recommande vivement.", positive: true },
+                { text: "Fonctionne bien, mais quelques bugs mineurs à corriger.", positive: false },
+                { text: "L'interface est agréable, mais le téléchargement est un peu lent.", positive: false },
+                { text: "Déception, l'application plante régulièrement sur mon téléphone.", positive: false },
+                { text: "Très pratique, je l'utilise tous les jours.", positive: true },
+                { text: "Le support client est réactif, j'ai été aidé rapidement.", positive: true },
+                { text: "Manque de fonctionnalités par rapport à d'autres apps similaires.", positive: false },
+                { text: "Simple et efficace, exactement ce que je cherchais.", positive: true },
+                { text: "Je n'arrive pas à télécharger la dernière version.", positive: false },
+                { text: "Excellente application, je suis très satisfait.", positive: true }
+            ];
+
+            function generateReviews(count) {
+                const reviews = [];
+                const usedNames = [];
+                for (let i = 0; i < count; i++) {
+                    let name;
+                    do {
+                        name = names[Math.floor(Math.random() * names.length)];
+                    } while (usedNames.includes(name) && usedNames.length < names.length);
+                    usedNames.push(name);
+                    const msg = messages[Math.floor(Math.random() * messages.length)];
+                    const rating = msg.positive ? 4 + Math.floor(Math.random() * 2) : 1 + Math.floor(Math.random() * 3);
+                    const date = new Date();
+                    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
+                    const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    reviews.push({
+                        name: name,
+                        rating: rating,
+                        text: msg.text,
+                        date: dateStr
+                    });
                 }
+                return reviews;
             }
 
-            // Fonction de téléchargement
+            // Générer 12 avis (on en affichera 5 puis 12)
+            const allReviews = generateReviews(12);
+
+            // ===== FETCH =====
+            async function fetchAppDetails() {
+                const resp = await fetch(`${API_BASE}/public/apps/${appId}`);
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    if (resp.status === 404) throw new Error('Application introuvable');
+                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                }
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                return data.app;
+            }
+
+            async function fetchAllApps() {
+                const resp = await fetch(`${API_BASE}/public/apps`);
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                }
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.message || 'Erreur inconnue');
+                return data.apps || [];
+            }
+
+            // ===== TÉLÉCHARGEMENT =====
             async function downloadApp() {
                 if (!appId || !latestVersionId) {
                     showToast('Impossible de télécharger : version non disponible.', 'error');
@@ -602,7 +820,6 @@
                     const downloadUrl = data.download?.url;
                     if (!downloadUrl) throw new Error('URL de téléchargement introuvable.');
 
-                    // Lancer le téléchargement
                     const link = document.createElement('a');
                     link.href = downloadUrl;
                     link.download = `${appData.title || 'app'}_v${data.download.version_name}.${data.download.format || 'apk'}`;
@@ -613,140 +830,236 @@
 
                     showToast(`✅ Téléchargement de ${data.download.app_name || appData.title} lancé !`, 'success');
                 } catch (err) {
-                    console.error('Erreur download:', err);
                     showToast('❌ ' + err.message, 'error');
                 } finally {
                     btn.disabled = false;
                     btn.classList.remove('loading');
-                    btn.innerHTML = `<i class="fas fa-download"></i> Télécharger (${appData.versions?.[0]?.version_name || 'Dernière version'})`;
+                    btn.innerHTML = `<i class="fas fa-download"></i> Télécharger`;
                 }
             }
 
-            // Afficher les détails
-            function renderApp(app) {
+            // ===== RENDER AVIS =====
+            function renderReviews(showAll) {
+                const container = document.getElementById('reviewsContainer');
+                const count = showAll ? allReviews.length : 5;
+                const visible = allReviews.slice(0, count);
+                let html = '';
+                visible.forEach(r => {
+                    const fullStars = Math.floor(r.rating);
+                    const stars = Array.from({ length: 5 }, (_, i) =>
+                        i < fullStars ? '★' : '☆'
+                    ).join('');
+                    const avatarEmoji = '👤';
+                    html += `
+                        <div class="review-item">
+                            <div class="avatar">${avatarEmoji}</div>
+                            <div class="review-content">
+                                <div class="review-header">
+                                    <span class="name">${r.name}</span>
+                                    <span class="stars">${stars}</span>
+                                </div>
+                                <div class="review-text">${r.text}</div>
+                                <div class="review-date">${r.date}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                const btn = document.getElementById('showMoreReviewsBtn');
+                if (count < allReviews.length) {
+                    btn.style.display = 'inline-block';
+                } else {
+                    btn.style.display = 'none';
+                }
+            }
+
+            // ===== RENDER =====
+            function renderApp(app, similarApps) {
                 appData = app;
                 const logoHtml = app.logo ?
                     `<img src="${app.logo}" alt="${app.title}" />` :
                     `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
 
-                // Déterminer la dernière version
                 const versions = app.versions || [];
                 const latest = versions.length > 0 ? versions[0] : null;
-                if (latest) latestVersionId = latest.id;
+                if (latest) {
+                    latestVersionId = latest.id;
+                    appSize = latest.file_size_bytes;
+                }
+
+                const downloads = app.downloads || 0;
+                const downloadsFormatted = formatDownloads(downloads);
+                const downloadsText = formatDownloadsText(downloads);
+
+                const reviewsCount = randomReviews();
+                const ageRating = '12+';
+                const sizeText = appSize ? formatSize(appSize) : 'N/A';
 
                 // Captures d'écran
                 let screenshotsHtml = '';
-                if (app.screenshots && app.screenshots.length > 0) {
-                    screenshotsHtml = app.screenshots.map(s =>
+                const screenshots = app.screenshots || [];
+                if (screenshots.length > 0) {
+                    screenshotsHtml = screenshots.slice(0, 6).map(s =>
                         `<div class="screenshot-item"><img src="${s.image_url}" alt="Capture" /></div>`
                     ).join('');
                 } else {
-                    screenshotsHtml = `<p style="color:#6b7280;">Aucune capture</p>`;
+                    screenshotsHtml = `<p style="color:#6b7280;font-size:0.9rem;">Aucune capture</p>`;
                 }
 
-                // Versions
-                let versionsHtml = '';
-                if (versions.length > 0) {
-                    versionsHtml = versions.map(v => `
-                        <div class="version-item">
-                            <div>
-                                <span class="vname">${v.version_name}</span>
-                                <span class="vcode">(code ${v.version_code})</span>
-                                <span class="vformat">${v.file_format}</span>
-                            </div>
-                            <div class="vmeta">
-                                <span class="size">${formatSize(v.file_size_bytes)}</span>
-                                <span style="font-size:0.7rem;color:#6b7280;">${formatDate(v.created_at)}</span>
-                            </div>
-                            ${v.changelog ? `<div style="width:100%;margin-top:4px;font-size:0.85rem;color:#9ca3af;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">${v.changelog}</div>` : ''}
-                        </div>
-                    `).join('');
-                } else {
-                    versionsHtml = `<p style="color:#6b7280;">Aucune version disponible</p>`;
-                }
+                // Description
+                const shortDesc = app.description?.short || '';
+                const longDesc = app.description?.long || '';
+                const fullDesc = longDesc || shortDesc;
 
                 // Développeur
                 const dev = app.developer || {};
 
-                // Bouton télécharger
-                const downloadBtnHtml = (latest) ? `
-                    <button class="download-btn" id="downloadBtn">
-                        <i class="fas fa-download"></i> Télécharger (${latest.version_name})
-                    </button>
-                ` : `
-                    <div style="text-align:center;color:#6b7280;padding:1rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.04);">
-                        <i class="fas fa-ban"></i> Aucune version disponible
-                    </div>
-                `;
+                // Applications similaires
+                let similarHtml = '';
+                if (similarApps && similarApps.length > 0) {
+                    similarApps.slice(0, 6).forEach(sim => {
+                        const simLogo = sim.logo_url ?
+                            `<img src="${sim.logo_url}" alt="${sim.title}" />` :
+                            `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+                        similarHtml += `
+                            <a href="app-detail.html?id=${sim.id}" class="similar-item">
+                                <div class="logo">${simLogo}</div>
+                                <div class="name">${sim.title || sim.package_name}</div>
+                                <div class="category">${sim.category || ''}</div>
+                            </a>
+                        `;
+                    });
+                }
 
+                // Construction du HTML principal avec la section avis
                 container.innerHTML = `
-                    <div class="app-detail">
-                        <div class="left">
-                            <!-- Carte principale -->
-                            <div class="app-card">
-                                <div class="app-header">
-                                    <div class="logo">${logoHtml}</div>
-                                    <div class="info">
-                                        <h1>${app.title}</h1>
-                                        <div class="package">${app.package_name}</div>
-                                        <span class="category">${app.category || 'Non catégorisé'}</span>
-                                    </div>
-                                </div>
-
-                                <div class="app-meta">
-                                    <div class="meta-item">
-                                        <span class="label">Téléchargements</span>
-                                        <span class="value">${(app.downloads || 0).toLocaleString()}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <span class="label">Date d'ajout</span>
-                                        <span class="value">${formatDate(app.created_at)}</span>
-                                    </div>
-                                </div>
-
-                                <div class="description">
-                                    <div class="short">${app.description?.short || 'Aucune description courte'}</div>
-                                    <div class="long">${app.description?.long || 'Aucune description longue'}</div>
-                                </div>
-                            </div>
-
-                            <!-- Développeur -->
-                            <div class="app-card">
-                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Développeur</h3>
-                                <div class="developer-info">
-                                    <div class="dev-item"><span class="label">Entreprise</span><span class="value">${dev.company_name || 'Non renseigné'}</span></div>
-                                    <div class="dev-item"><span class="label">Email</span><span class="value">${dev.email || 'N/A'}</span></div>
-                                    <div class="dev-item"><span class="label">Pays</span><span class="value">${dev.country || 'N/A'}</span></div>
-                                    <div class="dev-item"><span class="label">Téléphone</span><span class="value">${dev.phone || 'N/A'}</span></div>
-                                </div>
+                    <div class="app-card">
+                        <!-- En-tête -->
+                        <div class="app-header">
+                            <div class="icon">${logoHtml}</div>
+                            <div class="info">
+                                <div class="name">${app.title}</div>
+                                <div class="developer">${dev.company_name || 'Développeur inconnu'}</div>
+                                <div class="category">${app.category || 'Non catégorisé'}</div>
                             </div>
                         </div>
 
-                        <div class="right">
-                            <!-- Captures d'écran -->
-                            <div class="app-card">
-                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Captures d'écran</h3>
-                                <div class="screenshots-grid">${screenshotsHtml}</div>
+                        <!-- Stats horizontal -->
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-value">${reviewsCount}</div>
+                                <div class="stat-label">Avis</div>
                             </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${ageRating}</div>
+                                <div class="stat-label">Âge</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${sizeText}</div>
+                                <div class="stat-label">Taille</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${downloadsFormatted}</div>
+                                <div class="stat-label">Téléchargements</div>
+                            </div>
+                        </div>
 
-                            <!-- Versions + téléchargement -->
-                            <div class="app-card">
-                                <h3 style="font-weight:600;color:#fff;margin-bottom:1rem;">Versions disponibles</h3>
-                                <div class="versions-list">${versionsHtml}</div>
-                                ${downloadBtnHtml}
+                        <!-- Télécharger -->
+                        <div class="download-section">
+                            <button class="download-btn" id="downloadBtn">
+                                <i class="fas fa-download"></i> Télécharger
+                            </button>
+                            <div class="download-size">${sizeText} · ${downloadsText}</div>
+                        </div>
+
+                        <!-- ===== AVIS ===== -->
+                        <div class="reviews-section">
+                            <div class="section-title">Avis</div>
+                            <div id="reviewsContainer"></div>
+                            <span class="show-more-reviews" id="showMoreReviewsBtn">Voir plus</span>
+                        </div>
+
+                        <!-- À propos -->
+                        <div class="about-section">
+                            <div class="about-title">À propos de cette application</div>
+                            <div class="about-text collapsed" id="aboutText">${fullDesc || 'Aucune description disponible.'}</div>
+                            ${fullDesc.length > 100 ? `<span class="show-more" id="showMoreBtn">Afficher plus</span>` : ''}
+                            <div class="dev-info" id="devInfo">
+                                <div class="dev-item"><span class="label">Développeur</span><span class="value">${dev.company_name || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Email</span><span class="value">${dev.email || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Pays</span><span class="value">${dev.country || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Téléphone</span><span class="value">${dev.phone || 'N/A'}</span></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Captures d'écran -->
+                    <div class="screenshots-section">
+                        <div class="section-title">Captures d'écran</div>
+                        <div class="screenshots-scroll">${screenshotsHtml}</div>
+                    </div>
+
+                    <!-- Applications similaires -->
+                    ${similarHtml ? `
+                    <div class="similar-section">
+                        <div class="section-title">Applications similaires</div>
+                        <div class="similar-grid">${similarHtml}</div>
+                    </div>
+                    ` : ''}
                 `;
 
-                // Attacher l'événement au bouton de téléchargement
+                // Gestion "Afficher plus / moins" avis
+                const reviewsContainer = document.getElementById('reviewsContainer');
+                const showMoreReviewsBtn = document.getElementById('showMoreReviewsBtn');
+                let reviewsExpanded = false;
+
+                function updateReviews() {
+                    renderReviews(reviewsExpanded);
+                }
+
+                if (showMoreReviewsBtn) {
+                    showMoreReviewsBtn.addEventListener('click', function() {
+                        reviewsExpanded = !reviewsExpanded;
+                        updateReviews();
+                        this.textContent = reviewsExpanded ? 'Voir moins' : 'Voir plus';
+                    });
+                }
+
+                // Afficher les 5 premiers avis
+                renderReviews(false);
+
+                // Gestion "Afficher plus" description
+                const aboutText = document.getElementById('aboutText');
+                const showMoreBtn = document.getElementById('showMoreBtn');
+                const devInfo = document.getElementById('devInfo');
+
+                if (showMoreBtn) {
+                    let expanded = false;
+                    showMoreBtn.addEventListener('click', function() {
+                        expanded = !expanded;
+                        if (expanded) {
+                            aboutText.classList.remove('collapsed');
+                            this.textContent = 'Afficher moins';
+                            devInfo.classList.add('visible');
+                        } else {
+                            aboutText.classList.add('collapsed');
+                            this.textContent = 'Afficher plus';
+                            devInfo.classList.remove('visible');
+                        }
+                    });
+                } else {
+                    if (aboutText) aboutText.classList.remove('collapsed');
+                    if (devInfo) devInfo.classList.add('visible');
+                }
+
+                // Bouton télécharger
                 const btn = document.getElementById('downloadBtn');
                 if (btn) {
                     btn.addEventListener('click', downloadApp);
                 }
             }
 
-            // Chargement initial
+            // ===== INIT =====
             async function init() {
                 try {
                     container.innerHTML = `
@@ -755,8 +1068,15 @@
                             <p>Chargement des détails...</p>
                         </div>
                     `;
-                    const app = await fetchAppDetails();
-                    renderApp(app);
+
+                    const [app, allAppsData] = await Promise.all([
+                        fetchAppDetails(),
+                        fetchAllApps()
+                    ]);
+
+                    allApps = allAppsData;
+                    const similar = allApps.filter(a => a.id != app.id);
+                    renderApp(app, similar);
                 } catch (err) {
                     container.innerHTML = `
                         <div class="error-state">
@@ -773,5 +1093,4 @@
     </script>
 </body>
 </html>
-
 
