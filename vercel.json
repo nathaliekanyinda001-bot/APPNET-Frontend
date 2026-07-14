@@ -3,6 +3,14 @@
     {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
+    },
+    {
+      "source": "/",
+      "destination": "/Publique/index.html"
+    },
+    {
+      "source": "/app-detail.html",
+      "destination": "/Publique/app-detail.html"
     }
   ]
 }
