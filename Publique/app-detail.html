@@ -299,7 +299,6 @@
             margin-top: 0.3rem;
         }
 
-        /* ===== AVIS ===== */
         .reviews-section {
             margin: 1.5rem 0;
         }
@@ -385,7 +384,6 @@
             text-decoration: underline;
         }
 
-        /* ===== À PROPOS ===== */
         .about-section {
             margin: 1.2rem 0;
         }
@@ -441,7 +439,6 @@
             text-align: right;
         }
 
-        /* ===== CAPTURES D'ÉCRAN ===== */
         .screenshots-section {
             margin: 1.5rem 0;
         }
@@ -485,7 +482,6 @@
             object-fit: cover;
         }
 
-        /* ===== APPLICATIONS SIMILAIRES ===== */
         .similar-section {
             margin-top: 2rem;
         }
@@ -651,81 +647,91 @@
             const container = document.getElementById('appContainer');
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
-            let toastTimeout;
+            var toastTimeout;
 
-            function showToast(text, type = 'info') {
-                toast.className = `toast ${type} show`;
+            function showToast(text, type) {
+                type = type || 'info';
+                toast.className = 'toast ' + type + ' show';
                 toastMessage.textContent = text;
                 clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
+                toastTimeout = setTimeout(function() {
                     toast.classList.remove('show');
                 }, 5000);
             }
 
-            const params = new URLSearchParams(window.location.search);
-            const appId = params.get('id');
-
-            if (!appId) {
-                container.innerHTML = `
-                    <div class="error-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>ID de l'application manquant.</p>
-                        <a href="store.html" style="color:#60a5fa;text-decoration:underline;">Retour au store</a>
-                    </div>
-                `;
-                throw new Error('ID manquant');
+            function escapeHTML(str) {
+                if (!str) return '';
+                var div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
             }
 
-            let appData = null;
-            let latestVersionId = null;
-            let appSize = null;
-            let allApps = [];
+            // ✅ Récupération du slug ou de l'ID
+            var params = new URLSearchParams(window.location.search);
+            var slug = params.get('slug');
+            var id = params.get('id');
 
-            // ===== FORMATAGE =====
+            if (!slug && !id) {
+                container.innerHTML =
+                    '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>Application introuvable.</p><a href="store.html" style="color:#60a5fa;text-decoration:underline;">Retour au store</a></div>';
+                throw new Error('Aucun slug ou ID fourni');
+            }
+
+            var appId = null;
+            var appData = null;
+            var latestVersionId = null;
+            var appSize = null;
+            var allApps = [];
+
             function formatSize(bytes) {
                 if (!bytes) return 'N/A';
-                const units = ['B', 'KB', 'MB', 'GB'];
-                let i = 0;
-                let size = bytes;
-                while (size >= 1024 && i < units.length - 1) {
-                    size /= 1024;
+                var num = Number(bytes);
+                if (isNaN(num)) return 'N/A';
+                var units = ['B', 'KB', 'MB', 'GB'];
+                var i = 0;
+                while (num >= 1024 && i < units.length - 1) {
+                    num /= 1024;
                     i++;
                 }
-                return size.toFixed(1) + ' ' + units[i];
+                return num.toFixed(1) + ' ' + units[i];
             }
 
             function formatDownloads(count) {
                 if (count === undefined || count === null) return '0';
-                const num = Number(count);
+                var num = Number(count);
                 if (isNaN(num)) return '0';
-                if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' Md';
-                if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
-                if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + ' k';
-                return num.toString();
+                if (num >= 1_000_000_000) {
+                    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' Md';
+                } else if (num >= 1_000_000) {
+                    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1).replace(/\.0$/, '') + ' k';
+                } else {
+                    return num.toString();
+                }
             }
 
             function formatDownloadsText(count) {
-                const num = Number(count) || 0;
-                if (num >= 1_000_000_000) return `Plus de ${(num / 1_000_000_000).toFixed(1).replace(/\.0$/, '')} Md`;
-                if (num >= 1_000_000) return `Plus de ${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')} M`;
-                if (num >= 1000) return `Plus de ${(num / 1000).toFixed(1).replace(/\.0$/, '')} k`;
-                return `Plus de ${num}`;
+                var num = Number(count) || 0;
+                if (num >= 1_000_000_000) return 'Plus de ' + (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' Md';
+                if (num >= 1_000_000) return 'Plus de ' + (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
+                if (num >= 1000) return 'Plus de ' + (num / 1000).toFixed(1).replace(/\.0$/, '') + ' k';
+                return 'Plus de ' + num;
             }
 
-            // Nombre d'avis aléatoire entre 1 et 100
             function randomReviews() {
                 return Math.floor(Math.random() * 100) + 1;
             }
 
             // ===== AVIS MOCK =====
-            const names = [
+            var names = [
                 'Kabongo Ntumba', 'Mbuyi Mwamba', 'Tshibanda Kabila', 'Kanyinda Kabasele',
                 'Mwamba Tshimanga', 'Nkosi Kambale', 'Mutombo Mbiya', 'Kasongo Ngoie',
                 'Tshimanga Mukendi', 'Kabamba Mputu', 'Ngalula Mwamba', 'Kankonde Mukuna',
                 'Kitoko Nzuzi', 'Lubumbashi Kabila', 'Mbaki Tshibola'
             ];
 
-            const messages = [
+            var messages = [
                 { text: "Application incroyable ! Très utile au quotidien.", positive: true },
                 { text: "J'adore cette app, elle répond parfaitement à mes besoins.", positive: true },
                 { text: "Très bonne application, je la recommande vivement.", positive: true },
@@ -741,19 +747,21 @@
             ];
 
             function generateReviews(count) {
-                const reviews = [];
-                const usedNames = [];
-                for (let i = 0; i < count; i++) {
-                    let name;
+                var reviews = [];
+                var usedNames = [];
+                for (var i = 0; i < count; i++) {
+                    var name;
+                    var attempts = 0;
                     do {
                         name = names[Math.floor(Math.random() * names.length)];
-                    } while (usedNames.includes(name) && usedNames.length < names.length);
+                        attempts++;
+                    } while (usedNames.indexOf(name) !== -1 && attempts < 20);
                     usedNames.push(name);
-                    const msg = messages[Math.floor(Math.random() * messages.length)];
-                    const rating = msg.positive ? 4 + Math.floor(Math.random() * 2) : 1 + Math.floor(Math.random() * 3);
-                    const date = new Date();
+                    var msg = messages[Math.floor(Math.random() * messages.length)];
+                    var rating = msg.positive ? 4 + Math.floor(Math.random() * 2) : 1 + Math.floor(Math.random() * 3);
+                    var date = new Date();
                     date.setDate(date.getDate() - Math.floor(Math.random() * 30));
-                    const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    var dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     reviews.push({
                         name: name,
                         rating: rating,
@@ -764,28 +772,36 @@
                 return reviews;
             }
 
-            const allReviews = generateReviews(12);
+            var allReviews = generateReviews(12);
 
             // ===== FETCH =====
             async function fetchAppDetails() {
-                const resp = await fetch(`${API_BASE}/public/apps/${appId}`);
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    if (resp.status === 404) throw new Error('Application introuvable');
-                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                var url;
+                if (slug) {
+                    url = API_BASE + '/public/apps/slug/' + encodeURIComponent(slug);
+                } else if (id) {
+                    url = API_BASE + '/public/apps/' + id;
+                } else {
+                    throw new Error('Aucun identifiant');
                 }
-                const data = await resp.json();
+                var resp = await fetch(url);
+                if (!resp.ok) {
+                    var err = await resp.json().catch(function() { return {}; });
+                    if (resp.status === 404) throw new Error('Application introuvable');
+                    throw new Error(err.message || 'Erreur HTTP ' + resp.status);
+                }
+                var data = await resp.json();
                 if (!data.success) throw new Error(data.message || 'Erreur inconnue');
                 return data;
             }
 
             async function fetchAllApps() {
-                const resp = await fetch(`${API_BASE}/public/apps`);
+                var resp = await fetch(API_BASE + '/public/apps');
                 if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                    var err = await resp.json().catch(function() { return {}; });
+                    throw new Error(err.message || 'Erreur HTTP ' + resp.status);
                 }
-                const data = await resp.json();
+                var data = await resp.json();
                 if (!data.success) throw new Error(data.message || 'Erreur inconnue');
                 return data.apps || [];
             }
@@ -797,69 +813,69 @@
                     return;
                 }
 
-                const btn = document.getElementById('downloadBtn');
+                var btn = document.getElementById('downloadBtn');
                 btn.disabled = true;
                 btn.classList.add('loading');
-                btn.innerHTML = `<span class="spinner"></span><span class="btn-text">Préparation...</span>`;
+                btn.innerHTML = '<span class="spinner"></span><span class="btn-text">Préparation...</span>';
 
                 try {
-                    const resp = await fetch(`${API_BASE}/apps/${appId}/download/${latestVersionId}`);
+                    var resp = await fetch(API_BASE + '/apps/' + appId + '/download/' + latestVersionId);
                     if (!resp.ok) {
-                        const err = await resp.json().catch(() => ({}));
-                        throw new Error(err.message || `Erreur HTTP ${resp.status}`);
+                        var err = await resp.json().catch(function() { return {}; });
+                        throw new Error(err.message || 'Erreur HTTP ' + resp.status);
                     }
-                    const data = await resp.json();
+                    var data = await resp.json();
                     if (!data.success) throw new Error(data.message || 'Erreur inconnue');
 
-                    const downloadUrl = data.download?.url;
+                    var downloadUrl = data.download && data.download.url;
                     if (!downloadUrl) throw new Error('URL de téléchargement introuvable.');
 
-                    const link = document.createElement('a');
+                    var link = document.createElement('a');
                     link.href = downloadUrl;
-                    link.download = `${appData.title || 'app'}_v${data.download.version_name}.${data.download.format || 'apk'}`;
+                    link.download = (appData.title || 'app') + '_v' + (data.download.version_name || 'latest') + '.' + (data
+                        .download.format || 'apk');
                     link.target = '_blank';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
 
-                    showToast(`✅ Téléchargement de ${data.download.app_name || appData.title} lancé !`, 'success');
+                    showToast('✅ Téléchargement de ' + (data.download.app_name || appData.title) + ' lancé !', 'success');
                 } catch (err) {
                     showToast('❌ ' + err.message, 'error');
                 } finally {
                     btn.disabled = false;
                     btn.classList.remove('loading');
-                    btn.innerHTML = `<i class="fas fa-download"></i> Télécharger`;
+                    btn.innerHTML = '<i class="fas fa-download"></i> Télécharger';
                 }
             }
 
             // ===== RENDER AVIS =====
             function renderReviews(showAll) {
-                const container = document.getElementById('reviewsContainer');
-                const count = showAll ? allReviews.length : 5;
-                const visible = allReviews.slice(0, count);
-                let html = '';
-                visible.forEach(r => {
-                    const fullStars = Math.floor(r.rating);
-                    const stars = Array.from({ length: 5 }, (_, i) =>
-                        i < fullStars ? '★' : '☆'
-                    ).join('');
-                    const avatarEmoji = '👤';
-                    html += `
-                        <div class="review-item">
-                            <div class="avatar">${avatarEmoji}</div>
-                            <div class="review-content">
-                                <div class="review-header">
-                                    <span class="name">${r.name}</span>
-                                    <span class="stars">${stars}</span>
-                                </div>
-                                <div class="review-text">${r.text}</div>
-                                <div class="review-date">${r.date}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-                const btn = document.getElementById('showMoreReviewsBtn');
+                var containerEl = document.getElementById('reviewsContainer');
+                var count = showAll ? allReviews.length : 5;
+                var visible = allReviews.slice(0, count);
+                var html = '';
+                for (var i = 0; i < visible.length; i++) {
+                    var r = visible[i];
+                    var fullStars = Math.floor(r.rating);
+                    var stars = '';
+                    for (var j = 0; j < 5; j++) {
+                        stars += j < fullStars ? '★' : '☆';
+                    }
+                    html += '<div class="review-item">' +
+                        '<div class="avatar">👤</div>' +
+                        '<div class="review-content">' +
+                        '<div class="review-header">' +
+                        '<span class="name">' + escapeHTML(r.name) + '</span>' +
+                        '<span class="stars">' + stars + '</span>' +
+                        '</div>' +
+                        '<div class="review-text">' + escapeHTML(r.text) + '</div>' +
+                        '<div class="review-date">' + escapeHTML(r.date) + '</div>' +
+                        '</div>' +
+                        '</div>';
+                }
+                containerEl.innerHTML = html;
+                var btn = document.getElementById('showMoreReviewsBtn');
                 if (count < allReviews.length) {
                     btn.style.display = 'inline-block';
                 } else {
@@ -867,136 +883,153 @@
                 }
             }
 
-            // ===== RENDER =====
+            // ===== RENDER PRINCIPAL =====
             function renderApp(app, versions, screenshots, similarApps) {
                 appData = app;
-                const logoHtml = app.logo_url ?
-                    `<img src="${app.logo_url}" alt="${app.title}" />` :
-                    `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+                appId = app.id;
 
-                const latest = versions && versions.length > 0 ? versions[0] : null;
+                var logoHtml = app.logo_url ?
+                    '<img src="' + escapeHTML(app.logo_url) + '" alt="' + escapeHTML(app.title) + '" />' :
+                    '<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>';
+
+                var latest = versions && versions.length > 0 ? versions[0] : null;
                 if (latest) {
                     latestVersionId = latest.id;
                     appSize = latest.file_size_bytes;
                 }
 
-                const downloads = app.downloads_count || 0;
-                const downloadsFormatted = formatDownloads(downloads);
-                const downloadsText = formatDownloadsText(downloads);
+                var downloads = app.downloads_count || 0;
+                var downloadsFormatted = formatDownloads(downloads);
+                var downloadsText = formatDownloadsText(downloads);
 
-                const reviewsCount = randomReviews();
-                const ageRating = '12+';
-                const sizeText = appSize ? formatSize(appSize) : 'N/A';
+                var reviewsCount = randomReviews();
+                var ageRating = '12+';
+                var sizeText = appSize ? formatSize(appSize) : 'N/A';
 
-                // Captures d'écran
-                let screenshotsHtml = '';
+                var screenshotsHtml = '';
                 if (screenshots && screenshots.length > 0) {
-                    screenshotsHtml = screenshots.slice(0, 6).map(s =>
-                        `<div class="screenshot-item"><img src="${s.image_url}" alt="Capture" /></div>`
-                    ).join('');
+                    for (var i = 0; i < Math.min(screenshots.length, 6); i++) {
+                        screenshotsHtml += '<div class="screenshot-item"><img src="' + escapeHTML(screenshots[i].image_url) +
+                            '" alt="Capture" /></div>';
+                    }
                 } else {
-                    screenshotsHtml = `<p style="color:#6b7280;font-size:0.9rem;">Aucune capture</p>`;
+                    screenshotsHtml = '<p style="color:#6b7280;font-size:0.9rem;">Aucune capture</p>';
                 }
 
-                // Description
-                const fullDesc = app.long_description || app.short_description || 'Aucune description disponible.';
+                var shortDesc = app.short_description || '';
+                var longDesc = app.long_description || '';
+                var fullDesc = longDesc || shortDesc || 'Aucune description disponible.';
 
-                // Applications similaires
-                let similarHtml = '';
+                var dev = app.developer || {};
+                var devName = dev.company_name || 'Développeur inconnu';
+                var devEmail = dev.email || 'N/A';
+                var devCountry = dev.country_code || 'N/A';
+                var devPhone = dev.phone_number || 'N/A';
+
+                var similarHtml = '';
                 if (similarApps && similarApps.length > 0) {
-                    similarApps.slice(0, 6).forEach(sim => {
-                        const simLogo = sim.logo_url ?
-                            `<img src="${sim.logo_url}" alt="${sim.title}" />` :
-                            `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
-                        similarHtml += `
-                            <a href="app-detail.html?id=${sim.id}" class="similar-item">
-                                <div class="logo">${simLogo}</div>
-                                <div class="name">${sim.title || sim.package_name}</div>
-                                <div class="category">${sim.category || ''}</div>
-                            </a>
-                        `;
-                    });
+                    var similarList = similarApps.slice(0, 6);
+                    for (var s = 0; s < similarList.length; s++) {
+                        var sim = similarList[s];
+                        var simLogo = sim.logo_url ?
+                            '<img src="' + escapeHTML(sim.logo_url) + '" alt="' + escapeHTML(sim.title) + '" />' :
+                            '<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>';
+                        var simLink = sim.slug ? 'app-detail.html?slug=' + encodeURIComponent(sim.slug) :
+                            'app-detail.html?id=' + sim.id;
+                        similarHtml +=
+                            '<a href="' + simLink + '" class="similar-item">' +
+                            '<div class="logo">' + simLogo + '</div>' +
+                            '<div class="name">' + escapeHTML(sim.title || sim.package_name) + '</div>' +
+                            '<div class="category">' + escapeHTML(sim.category || '') + '</div>' +
+                            '</a>';
+                    }
                 }
 
-                container.innerHTML = `
-                    <div class="app-card">
-                        <!-- En-tête -->
-                        <div class="app-header">
-                            <div class="icon">${logoHtml}</div>
-                            <div class="info">
-                                <div class="name">${app.title}</div>
-                                <div class="developer">${app.package_name || 'Développeur inconnu'}</div>
-                                <div class="category">${app.category || 'Non catégorisé'}</div>
-                            </div>
-                        </div>
+                var downloadBtnHtml;
+                if (latest) {
+                    downloadBtnHtml =
+                        '<button class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> Télécharger</button>';
+                } else {
+                    downloadBtnHtml =
+                        '<div style="text-align:center;color:#6b7280;padding:1rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.04);">' +
+                        '<i class="fas fa-ban"></i> Aucune version disponible' +
+                        '</div>';
+                }
 
-                        <!-- Stats horizontal -->
-                        <div class="stats-row">
-                            <div class="stat-item">
-                                <div class="stat-value">${reviewsCount}</div>
-                                <div class="stat-label">Avis</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${ageRating}</div>
-                                <div class="stat-label">Âge</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${sizeText}</div>
-                                <div class="stat-label">Taille</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${downloadsFormatted}</div>
-                                <div class="stat-label">Téléchargements</div>
-                            </div>
-                        </div>
+                var html =
+                    '<div class="app-card">' +
+                    '<div class="app-header">' +
+                    '<div class="icon">' + logoHtml + '</div>' +
+                    '<div class="info">' +
+                    '<div class="name">' + escapeHTML(app.title) + '</div>' +
+                    '<div class="developer">' + escapeHTML(devName) + '</div>' +
+                    '<div class="category">' + escapeHTML(app.category || 'Non catégorisé') + '</div>' +
+                    '</div>' +
+                    '</div>' +
 
-                        <!-- Télécharger -->
-                        <div class="download-section">
-                            <button class="download-btn" id="downloadBtn">
-                                <i class="fas fa-download"></i> Télécharger
-                            </button>
-                            <div class="download-size">${sizeText} · ${downloadsText}</div>
-                        </div>
+                    '<div class="stats-row">' +
+                    '<div class="stat-item"><div class="stat-value">' + reviewsCount +
+                    '</div><div class="stat-label">Avis</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + ageRating +
+                    '</div><div class="stat-label">Âge</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + sizeText +
+                    '</div><div class="stat-label">Taille</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + downloadsFormatted +
+                    '</div><div class="stat-label">Téléchargements</div></div>' +
+                    '</div>' +
 
-                        <!-- ===== AVIS ===== -->
-                        <div class="reviews-section">
-                            <div class="section-title">Avis</div>
-                            <div id="reviewsContainer"></div>
-                            <span class="show-more-reviews" id="showMoreReviewsBtn">Voir plus</span>
-                        </div>
+                    '<div class="download-section">' +
+                    downloadBtnHtml +
+                    '<div class="download-size">' + sizeText + ' · ' + downloadsText + '</div>' +
+                    '</div>' +
 
-                        <!-- À propos -->
-                        <div class="about-section">
-                            <div class="about-title">À propos de cette application</div>
-                            <div class="about-text collapsed" id="aboutText">${fullDesc}</div>
-                            ${fullDesc.length > 100 ? `<span class="show-more" id="showMoreBtn">Afficher plus</span>` : ''}
-                            <div class="dev-info" id="devInfo">
-                                <div class="dev-item"><span class="label">Package</span><span class="value">${app.package_name || 'N/A'}</span></div>
-                                <div class="dev-item"><span class="label">Catégorie</span><span class="value">${app.category || 'N/A'}</span></div>
-                                <div class="dev-item"><span class="label">Ajouté le</span><span class="value">${app.created_at ? new Date(app.created_at).toLocaleDateString('fr-FR') : 'N/A'}</span></div>
-                            </div>
-                        </div>
-                    </div>
+                    '<div class="reviews-section">' +
+                    '<div class="section-title">Avis</div>' +
+                    '<div id="reviewsContainer"></div>' +
+                    '<span class="show-more-reviews" id="showMoreReviewsBtn">Voir plus</span>' +
+                    '</div>' +
 
-                    <!-- Captures d'écran -->
-                    <div class="screenshots-section">
-                        <div class="section-title">Captures d'écran</div>
-                        <div class="screenshots-scroll">${screenshotsHtml}</div>
-                    </div>
+                    '<div class="about-section">' +
+                    '<div class="about-title">À propos de cette application</div>' +
+                    '<div class="about-text collapsed" id="aboutText">' + escapeHTML(fullDesc) + '</div>';
 
-                    <!-- Applications similaires -->
-                    ${similarHtml ? `
-                    <div class="similar-section">
-                        <div class="section-title">Applications similaires</div>
-                        <div class="similar-grid">${similarHtml}</div>
-                    </div>
-                    ` : ''}
-                `;
+                if (fullDesc.length > 100) {
+                    html += '<span class="show-more" id="showMoreBtn">Afficher plus</span>';
+                }
+
+                html +=
+                    '<div class="dev-info" id="devInfo">' +
+                    '<div class="dev-item"><span class="label">Développeur</span><span class="value">' + escapeHTML(
+                        devName) + '</span></div>' +
+                    '<div class="dev-item"><span class="label">Email</span><span class="value">' + escapeHTML(devEmail) +
+                    '</span></div>' +
+                    '<div class="dev-item"><span class="label">Pays</span><span class="value">' + escapeHTML(devCountry) +
+                    '</span></div>' +
+                    '<div class="dev-item"><span class="label">Téléphone</span><span class="value">' + escapeHTML(devPhone) +
+                    '</span></div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+
+                    '<div class="screenshots-section">' +
+                    '<div class="section-title">Captures d\'écran</div>' +
+                    '<div class="screenshots-scroll">' + screenshotsHtml + '</div>' +
+                    '</div>';
+
+                if (similarHtml) {
+                    html +=
+                        '<div class="similar-section">' +
+                        '<div class="section-title">Applications similaires</div>' +
+                        '<div class="similar-grid">' + similarHtml + '</div>' +
+                        '</div>';
+                }
+
+                container.innerHTML = html;
 
                 // Gestion "Afficher plus / moins" avis
-                const reviewsContainer = document.getElementById('reviewsContainer');
-                const showMoreReviewsBtn = document.getElementById('showMoreReviewsBtn');
-                let reviewsExpanded = false;
+                var reviewsContainer = document.getElementById('reviewsContainer');
+                var showMoreReviewsBtn = document.getElementById('showMoreReviewsBtn');
+                var reviewsExpanded = false;
 
                 function updateReviews() {
                     renderReviews(reviewsExpanded);
@@ -1010,16 +1043,15 @@
                     });
                 }
 
-                // Afficher les 5 premiers avis
                 renderReviews(false);
 
                 // Gestion "Afficher plus" description
-                const aboutText = document.getElementById('aboutText');
-                const showMoreBtn = document.getElementById('showMoreBtn');
-                const devInfo = document.getElementById('devInfo');
+                var aboutText = document.getElementById('aboutText');
+                var showMoreBtn = document.getElementById('showMoreBtn');
+                var devInfo = document.getElementById('devInfo');
 
                 if (showMoreBtn) {
-                    let expanded = false;
+                    var expanded = false;
                     showMoreBtn.addEventListener('click', function() {
                         expanded = !expanded;
                         if (expanded) {
@@ -1037,8 +1069,7 @@
                     if (devInfo) devInfo.classList.add('visible');
                 }
 
-                // Bouton télécharger
-                const btn = document.getElementById('downloadBtn');
+                var btn = document.getElementById('downloadBtn');
                 if (btn) {
                     btn.addEventListener('click', downloadApp);
                 }
@@ -1047,34 +1078,26 @@
             // ===== INIT =====
             async function init() {
                 try {
-                    container.innerHTML = `
-                        <div class="loading-state">
-                            <i class="fas fa-spinner spinner"></i>
-                            <p>Chargement des détails...</p>
-                        </div>
-                    `;
+                    container.innerHTML =
+                        '<div class="loading-state"><i class="fas fa-spinner spinner"></i><p>Chargement des détails...</p></div>';
 
-                    const [detailData, allAppsData] = await Promise.all([
-                        fetchAppDetails(),
-                        fetchAllApps()
-                    ]);
+                    var detailData = await fetchAppDetails();
+                    var allAppsData = await fetchAllApps();
 
                     allApps = allAppsData;
-                    const similar = allApps.filter(a => a.id != appId);
 
-                    const app = detailData.app;
-                    const versions = detailData.versions || [];
-                    const screenshots = detailData.screenshots || [];
+                    var app = detailData.app;
+                    var versions = detailData.versions || [];
+                    var screenshots = detailData.screenshots || [];
+
+                    var similar = allApps.filter(function(a) { return a.id !== app.id; });
 
                     renderApp(app, versions, screenshots, similar);
                 } catch (err) {
-                    container.innerHTML = `
-                        <div class="error-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>${err.message || 'Impossible de charger les détails.'}</p>
-                            <a href="store.html" style="color:#60a5fa;text-decoration:underline;margin-top:1rem;display:inline-block;">Retour au store</a>
-                        </div>
-                    `;
+                    container.innerHTML =
+                        '<div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>' + escapeHTML(err
+                            .message || 'Impossible de charger les détails.') +
+                        '</p><a href="store.html" style="color:#60a5fa;text-decoration:underline;margin-top:1rem;display:inline-block;">Retour au store</a></div>';
                 }
             }
 
