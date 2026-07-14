@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -721,7 +718,6 @@
             }
 
             // ===== AVIS MOCK =====
-            // Noms congolais (masculins / féminins)
             const names = [
                 'Kabongo Ntumba', 'Mbuyi Mwamba', 'Tshibanda Kabila', 'Kanyinda Kabasele',
                 'Mwamba Tshimanga', 'Nkosi Kambale', 'Mutombo Mbiya', 'Kasongo Ngoie',
@@ -729,7 +725,6 @@
                 'Kitoko Nzuzi', 'Lubumbashi Kabila', 'Mbaki Tshibola'
             ];
 
-            // Messages d'avis (mix positif / négatif)
             const messages = [
                 { text: "Application incroyable ! Très utile au quotidien.", positive: true },
                 { text: "J'adore cette app, elle répond parfaitement à mes besoins.", positive: true },
@@ -769,7 +764,6 @@
                 return reviews;
             }
 
-            // Générer 12 avis (on en affichera 5 puis 12)
             const allReviews = generateReviews(12);
 
             // ===== FETCH =====
@@ -782,7 +776,7 @@
                 }
                 const data = await resp.json();
                 if (!data.success) throw new Error(data.message || 'Erreur inconnue');
-                return data.app;
+                return data;
             }
 
             async function fetchAllApps() {
@@ -874,20 +868,19 @@
             }
 
             // ===== RENDER =====
-            function renderApp(app, similarApps) {
+            function renderApp(app, versions, screenshots, similarApps) {
                 appData = app;
-                const logoHtml = app.logo ?
-                    `<img src="${app.logo}" alt="${app.title}" />` :
+                const logoHtml = app.logo_url ?
+                    `<img src="${app.logo_url}" alt="${app.title}" />` :
                     `<div class="placeholder"><i class="fas fa-mobile-alt"></i></div>`;
 
-                const versions = app.versions || [];
-                const latest = versions.length > 0 ? versions[0] : null;
+                const latest = versions && versions.length > 0 ? versions[0] : null;
                 if (latest) {
                     latestVersionId = latest.id;
                     appSize = latest.file_size_bytes;
                 }
 
-                const downloads = app.downloads || 0;
+                const downloads = app.downloads_count || 0;
                 const downloadsFormatted = formatDownloads(downloads);
                 const downloadsText = formatDownloadsText(downloads);
 
@@ -897,8 +890,7 @@
 
                 // Captures d'écran
                 let screenshotsHtml = '';
-                const screenshots = app.screenshots || [];
-                if (screenshots.length > 0) {
+                if (screenshots && screenshots.length > 0) {
                     screenshotsHtml = screenshots.slice(0, 6).map(s =>
                         `<div class="screenshot-item"><img src="${s.image_url}" alt="Capture" /></div>`
                     ).join('');
@@ -907,12 +899,7 @@
                 }
 
                 // Description
-                const shortDesc = app.description?.short || '';
-                const longDesc = app.description?.long || '';
-                const fullDesc = longDesc || shortDesc;
-
-                // Développeur
-                const dev = app.developer || {};
+                const fullDesc = app.long_description || app.short_description || 'Aucune description disponible.';
 
                 // Applications similaires
                 let similarHtml = '';
@@ -931,7 +918,6 @@
                     });
                 }
 
-                // Construction du HTML principal avec la section avis
                 container.innerHTML = `
                     <div class="app-card">
                         <!-- En-tête -->
@@ -939,7 +925,7 @@
                             <div class="icon">${logoHtml}</div>
                             <div class="info">
                                 <div class="name">${app.title}</div>
-                                <div class="developer">${dev.company_name || 'Développeur inconnu'}</div>
+                                <div class="developer">${app.package_name || 'Développeur inconnu'}</div>
                                 <div class="category">${app.category || 'Non catégorisé'}</div>
                             </div>
                         </div>
@@ -982,13 +968,12 @@
                         <!-- À propos -->
                         <div class="about-section">
                             <div class="about-title">À propos de cette application</div>
-                            <div class="about-text collapsed" id="aboutText">${fullDesc || 'Aucune description disponible.'}</div>
+                            <div class="about-text collapsed" id="aboutText">${fullDesc}</div>
                             ${fullDesc.length > 100 ? `<span class="show-more" id="showMoreBtn">Afficher plus</span>` : ''}
                             <div class="dev-info" id="devInfo">
-                                <div class="dev-item"><span class="label">Développeur</span><span class="value">${dev.company_name || 'N/A'}</span></div>
-                                <div class="dev-item"><span class="label">Email</span><span class="value">${dev.email || 'N/A'}</span></div>
-                                <div class="dev-item"><span class="label">Pays</span><span class="value">${dev.country || 'N/A'}</span></div>
-                                <div class="dev-item"><span class="label">Téléphone</span><span class="value">${dev.phone || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Package</span><span class="value">${app.package_name || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Catégorie</span><span class="value">${app.category || 'N/A'}</span></div>
+                                <div class="dev-item"><span class="label">Ajouté le</span><span class="value">${app.created_at ? new Date(app.created_at).toLocaleDateString('fr-FR') : 'N/A'}</span></div>
                             </div>
                         </div>
                     </div>
@@ -1069,14 +1054,19 @@
                         </div>
                     `;
 
-                    const [app, allAppsData] = await Promise.all([
+                    const [detailData, allAppsData] = await Promise.all([
                         fetchAppDetails(),
                         fetchAllApps()
                     ]);
 
                     allApps = allAppsData;
-                    const similar = allApps.filter(a => a.id != app.id);
-                    renderApp(app, similar);
+                    const similar = allApps.filter(a => a.id != appId);
+
+                    const app = detailData.app;
+                    const versions = detailData.versions || [];
+                    const screenshots = detailData.screenshots || [];
+
+                    renderApp(app, versions, screenshots, similar);
                 } catch (err) {
                     container.innerHTML = `
                         <div class="error-state">
@@ -1093,4 +1083,3 @@
     </script>
 </body>
 </html>
-
